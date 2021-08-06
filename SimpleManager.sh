@@ -130,18 +130,19 @@ startScripts() {
 screen -S autoupdate -d -m sudo bash $DIR/autoupdate.sh
 ##
 LogInput="Warning: All scripts should now be online..."
-sudo bash $DIR/log.sh "log" "$LogInput"
+sudo bash $DIR/log.sh "$LogInput"
 sleep 10;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
 ##main menu function 3##
 stopScripts () {
 screen -ls
-echo "Would you like to restart the scripts?"
+echo "Would you like to restart the scripts? Y/N"
+read -e '' yn
 case $yn in
 	[Yy]* ) 
 	LogInput="WARNING! ALL SERVER SCRIPTS ARE RESTARTING. EACH SCRIPT SHOULD SEND A MESSAGE WHEN SUCCESSFUL..."
-	sudo bash $DIR/log.sh "log" "$LogInput"
+	sudo bash $DIR/log.sh "$LogInput"
 	python3 send.py "$whRED" "$LogInput" "$TIME0"
 	sleep 5;
 	##kill screens
@@ -158,6 +159,18 @@ case $yn in
    * ) echo "Please answer yes or no.";;
     esac
 mainMenu
+}
+
+logDump () {
+TIME0=$(date)    
+tail -n 99 <$FILE   > logfile.txt
+curl \
+  -F 'payload_json={"username": "Botty McBotFace", "content": "@everyone"}' \
+  -F "file1=@logfile.txt" \
+  $WEBHOOK_URL
+  sleep 1;
+  rm logfile.txt
+  mainMenu
 }
 
 mainMenu () {
@@ -179,7 +192,7 @@ echo "$(tput sgr0)"
 
 if [[ "$MenuProcessor" = "1" ]]; then
 ##Dump 99 lines of log##
-bash $DIR/log.sh "logDump"
+logDump
 mainMenu
 fi
 if [[ "$MenuProcessor" = "2" ]]; then

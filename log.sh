@@ -2,7 +2,6 @@
 #Global Variables##
 source $HOME/SimpleManager/global.var
 
-log () {
 TIME0=$(date)    
 sudo /bin/cat <<-EOM >>$FILE
     Activity logged on $TIME0
@@ -13,17 +12,3 @@ sudo /bin/cat <<-EOM >>$FILE
 	${TAB} $3 
 	${TAB} $4
 EOM
-}
-
-logDump () {
-TIME0=$(date)    
-tail -n 99 <$FILE   > logfile.txt
-curl \
-  -F 'payload_json={"username": "Botty McBotFace", "content": "@everyone"}' \
-  -F "file1=@logfile.txt" \
-  $WEBHOOK_URL
-  sleep 1;
-  rm logfile.txt
-}
-
-$1
