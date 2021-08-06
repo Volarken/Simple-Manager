@@ -136,7 +136,7 @@ echo -e "##############################################################
 read -p '>>' -e MenuProcessor
 echo "$(tput sgr0)"
 
-if [[ "$MenuProcessor" = "1"
+if [[ "$MenuProcessor" = "1" ]]; then
 ##Dump 99 lines of log##
 bash discord_log.sh "logDump"
 mainMenu
