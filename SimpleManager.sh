@@ -140,8 +140,9 @@ if [[ "$MenuProcessor" = "1"
 ##Dump 99 lines of log##
 bash discord_log.sh "logDump"
 mainMenu
-
+fi
 if [[ "$MenuProcessor" = "2" ]];
+fi
 }
 mainMenu
 
