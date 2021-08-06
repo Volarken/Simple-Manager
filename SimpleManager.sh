@@ -102,6 +102,7 @@ setWebhook () {
     read -p '' -e quickChoice
       if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
       sudo rm -Rf $DIR/webhook.py
+	  sudo rm -Rf $DIR/webhook.txt
       fi
         if [[ "$quickChoice" = "N" || "n" ]]; then 
         echo "Currently we do not allow multiple webhooks, we do plan to add this support soon." 
@@ -113,8 +114,9 @@ setWebhook () {
   echo "To setup discord notifcaitons, create a webhook on your discord server."
   echo "Please paste the Webhook URL below and press enter..."
   read -p '' WEBHOOK
+  echo "$WEBHOOK_URL" >> /usr/bin/discord0host/webhook.txt
   sudo /bin/cat <<-EOM >>$DIR/webhook.py
-  url = '$WEBHOOK'
+url = '$WEBHOOK'
 EOM
   echo 'Webhook set!'
   echo "Press enter to return to main menu..."
