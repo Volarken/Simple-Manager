@@ -40,10 +40,10 @@ if test -d $HOME/SimpleManager/
 ##function 3##
 updateCheck(){
 if [ "$APIVERSION" = "$WEBVERSION" ]; then
-bash log.sh "Script up to date, last update check ran on $TIME0"
+bash $DIR/log.sh "Script up to date, last update check ran on $TIME0"
 requiredReposCheck
 else
-	 bash log.sh "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
+	 bash $DIR/log.sh "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
@@ -130,10 +130,9 @@ startScripts() {
 screen -S autoupdate -d -m sudo bash $DIR/autoupdate.sh
 ##
 LogInput="Warning: All scripts should now be online..."
-$log
+sudo bash $DIR/log.sh "log" "$LogInput"
 sleep 10;
-python3 send.py "$whBLUE" "$whlog"
-
+python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
 ##main menu function 3##
 stopScripts () {
@@ -142,8 +141,8 @@ echo "Would you like to restart the scripts?"
 case $yn in
 	[Yy]* ) 
 	LogInput="WARNING! ALL SERVER SCRIPTS ARE RESTARTING. EACH SCRIPT SHOULD SEND A MESSAGE WHEN SUCCESSFUL..."
-	$log
-	python3 send.py "$whRED" "$whlog"
+	sudo bash $DIR/log.sh "log" "$LogInput"
+	python3 send.py "$whRED" "$LogInput" "$TIME0"
 	sleep 5;
 	##kill screens
 	screen -X -S autoupdate quit
@@ -180,7 +179,7 @@ echo "$(tput sgr0)"
 
 if [[ "$MenuProcessor" = "1" ]]; then
 ##Dump 99 lines of log##
-bash log.sh "logDump"
+bash $DIR/log.sh "logDump"
 mainMenu
 fi
 if [[ "$MenuProcessor" = "2" ]]; then
