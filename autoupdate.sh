@@ -5,7 +5,7 @@ source $HOME/SimpleManager/global.var
 ##Child Script Variables##
 declare -i DAYS
 ##
-LogInput="AutoUpdate/Restart script is now online."
+export LogInput="AutoUpdate/Restart script is now online."
 sudo bash log.sh "$LogInput"
 sudo bash discord_log.sh "hookSend" "$LogInput" "$whGREEN"
 while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the script is constantly looping.
