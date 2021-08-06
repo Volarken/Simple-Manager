@@ -144,8 +144,8 @@ if [[ "$MenuProcessor" = "1" ]]; then
 bash discord_log.sh "logDump"
 mainMenu
 fi
-#if [[ "$MenuProcessor" = "2" ]];
-#fi
+if [[ "$MenuProcessor" = "4" ]];
+setWebhook
 }
 mainMenu
 
