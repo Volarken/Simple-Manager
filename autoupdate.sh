@@ -1,4 +1,4 @@
-#!/bin/sudo bash
+#!/bin/bash
 #Global Variables##
 source $HOME/SimpleManager/global.var
 

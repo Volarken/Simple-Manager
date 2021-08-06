@@ -150,6 +150,7 @@ case $yn in
 	##
 	
 	startScripts
+	;;
 	[Nn]* ) 
   echo "Press enter to return to main menu..."
   read -p ''
@@ -157,8 +158,6 @@ case $yn in
   ;;
    * ) echo "Please answer yes or no.";;
     esac
-fi
-else
 mainMenu
 }
 
