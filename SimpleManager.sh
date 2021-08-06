@@ -32,6 +32,7 @@ if test -d $HOME/SimpleManager/
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -O $DIR/discord_log.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 	 source $HOME/SimpleManager/global.var
 	 updateCheck
       fi
@@ -49,6 +50,7 @@ else
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -O $DIR/discord_log.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 clear
 sudo bash "$0"
 fi
