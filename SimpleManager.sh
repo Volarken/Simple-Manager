@@ -113,7 +113,9 @@ setWebhook () {
   echo "To setup discord notifcaitons, create a webhook on your discord server."
   echo "Please paste the Webhook URL below and press enter..."
   read -p '' WEBHOOK
-  echo "$WEBHOOK" >> $DIR/webhook.txt
+  sudo /bin/cat <<-EOM >>$FILE
+  url = '$WEBHOOK'
+EOM
   echo 'Webhook set!'
   echo "Press enter to return to main menu..."
   read -p ''

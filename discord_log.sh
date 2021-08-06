@@ -15,10 +15,9 @@ curl \
 
 hookSend() {
 TIME0=$(date)
-WEBHOOK_URL="https://discord.com/api/webhooks/873223854556852235/ZWQDDfZOFGdTCvmPM7saO9gcarg_58pFLJBF3953vizklpKjkOs6rvABHJwgnPmwHOns"
 curl \
   -H "Content-Type: application/json" \
-  -d '{"username": "Botty McBotFace", "content": "@everyone", "embeds": [{"title": "'$2'", "color": "'$3'"}]}' \
+  -d '{"username": "Botty McBotFace", "content": "'$2'"}' \
   $WEBHOOK_URL
 
 }

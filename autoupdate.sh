@@ -5,9 +5,9 @@ source $HOME/SimpleManager/global.var
 ##Child Script Variables##
 declare -i DAYS
 ##
-export LogInput="AutoUpdate/Restart script is now online."
+LogInput="AutoUpdate/Restart script is now online."
 sudo bash log.sh "$LogInput"
-sudo bash discord_log.sh "hookSend" "$LogInput" "$whGREEN"
+sudo bash discord_log.sh "hookSend" "'$LogInput'" "'$whGREEN'"
 while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the script is constantly looping.
 TIME1=$(date +%H:%M)          #This stores the current time inside of a variable called TIME1
 sleep 10;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.

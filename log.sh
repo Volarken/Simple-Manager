@@ -11,5 +11,4 @@ sudo /bin/cat <<-EOM >>$FILE
 	${TAB} $1 
 	${TAB} $2 
 	${TAB} $3
-	${TAB}END
 EOM
