@@ -7,7 +7,7 @@ if [[ "$EUID" -ne 0 ]]; then
  echo
  echo -e "We will attempt to do this for you."
  echo
- read -p 'Press enter to continue'
+ read -O 'Press enter to continue'
 ##attempt fix##
  clear
  adminCheck
@@ -27,10 +27,10 @@ if test -d $HOME/SimpleManager/
     else
      sudo mkdir $HOME/SimpleManager/
      echo Folder Created
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -P $DIR/autoupdate.sh
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -P $DIR/log.sh
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -P $DIR/discord_log.sh
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -P $DIR/global.var
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -O $DIR/discord_log.sh
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 source $HOME/SimpleManager/global.var
 	 updateCheck
       fi
@@ -42,11 +42,11 @@ if [ "$APIVERSION" = "$WEBVERSION" ]; then
 bash log.sh "Script up to date, last update check ran on $TIME0"
 requiredReposCheck
 else
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -P $0
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -P $DIR/autoupdate.sh
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -P $DIR/log.sh
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -P $DIR/discord_log.sh
-	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -P $DIR/global.var
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -O $DIR/discord_log.sh
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 clear
 sudo bash "$0"
 fi
@@ -58,7 +58,7 @@ if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed"
 then
   bash log "Missing python3" "One or more required repositories are not installed, will aquire now at $TIME0"
   echo You are missing required files, we will aquire them now. This may take a while. 
-  read -p 'Press enter to continue.'
+  read -O 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
   sudo apt-get install fail2ban
@@ -68,7 +68,7 @@ if [ $(dpkg-query -W -f='${Status}' screen 2>/dev/null | grep -c "ok installed")
 then
   bash log "Missing screen" "One or more required repositories are not installed, will aquire now at $TIME0"
   echo You are missing required files, we will aquire them now. This may take a while. 
-  read -p 'Press enter to continue.'
+  read -O 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
   sudo apt-get install fail2ban
@@ -78,7 +78,7 @@ if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed
 then
   bash log "Missing screen" "One or more required repositories are not installed, will aquire now at $TIME0"
   echo You are missing required files, we will aquire them now. This may take a while. 
-  read -p 'Press enter to continue.'
+  read -O 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
   sudo apt-get install fail2ban
