@@ -27,11 +27,10 @@ if test -d $HOME/SimpleManager/
     else
      sudo mkdir $HOME/SimpleManager/
      echo Folder Created
-	 sudo wget ##add downloads for all files here pls
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -P $DIR
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -P $DIR
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -P $DIR
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -P $DIR
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -P $DIR/autoupdate.sh
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -P $DIR/log.sh
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -P $DIR/discord_log.sh
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -P $DIR/global.var
 	 source $HOME/SimpleManager/global.var
 	 updateCheck
       fi
@@ -43,11 +42,11 @@ if [ "$APIVERSION" = "$WEBVERSION" ]; then
 bash log.sh "Script up to date, last update check ran on $TIME0"
 requiredReposCheck
 else
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -P $0
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -P $DIR
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -P $DIR
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -P $DIR
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -P $DIR
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -P $0
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -P $DIR/autoupdate.sh
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -P $DIR/log.sh
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -P $DIR/discord_log.sh
+	 sudo sudo wget -O https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -P $DIR/global.var
 clear
 sudo bash "$0"
 fi
