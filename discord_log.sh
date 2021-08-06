@@ -14,12 +14,12 @@ curl \
 }
 
 hookSend() {
+##Function Handbook##
+#$1 - Color#
+#$2 - Message
+#$3 - Time/Date
 TIME0=$(date)
-curl \
-  -H "Content-Type: application/json" \
-  -d '{"username": "Botty McBotFace", "content": "'$2'"}' \
-  $WEBHOOK_URL
-
+python3 send.py "$2" "$3" "$4"
 }
 
 $1

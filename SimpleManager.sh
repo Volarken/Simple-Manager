@@ -96,12 +96,12 @@ adminCheck
 
 ##main menu function 1##
 setWebhook () {
- if [[ -f $DIR/webhook.txt ]]; then
+ if [[ -f $DIR/webhook.py ]]; then
     echo "Looks like you already have a webhook setup, would you like to remove it?"
     echo "Y/N"
     read -p '' -e quickChoice
       if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
-      sudo rm -Rf $DIR/webhook.txt
+      sudo rm -Rf $DIR/webhook.py
       fi
         if [[ "$quickChoice" = "N" || "n" ]]; then 
         echo "Currently we do not allow multiple webhooks, we do plan to add this support soon." 
@@ -113,7 +113,7 @@ setWebhook () {
   echo "To setup discord notifcaitons, create a webhook on your discord server."
   echo "Please paste the Webhook URL below and press enter..."
   read -p '' WEBHOOK
-  sudo /bin/cat <<-EOM >>$FILE
+  sudo /bin/cat <<-EOM >>$DIR/webhook.py
   url = '$WEBHOOK'
 EOM
   echo 'Webhook set!'
@@ -144,8 +144,9 @@ if [[ "$MenuProcessor" = "1" ]]; then
 bash discord_log.sh "logDump"
 mainMenu
 fi
-if [[ "$MenuProcessor" = "4" ]];
+if [[ "$MenuProcessor" = "4" ]]; then
 setWebhook
+fi
 }
 mainMenu
 

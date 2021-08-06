@@ -1,12 +1,12 @@
 import requests #dependency
 import sys
-from webhook.py import
+from webhook import *
 
 if __name__ == "__main__":
     a = str(sys.argv[1])
     b = str(sys.argv[2])
-    url = "https://discord.com/api/webhooks/862807958231711754/xclV0iIlpWNeZK-6yzL974AzG1VUdg6xu9d-WV6IQEpBKydM15iFQ-h7zn_MXWGt0Wo5" #webhook url, from here: https://i.imgur.com/f9XnAew.png
-
+    c = str(sys.argv[3])
+    
 #for all params, see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
     data = {
         "content" : "@everyone",
@@ -17,8 +17,9 @@ if __name__ == "__main__":
 #for all params, see https://discordapp.com/developers/docs/resources/channel#embed-object
     data["embeds"] = [
         {
-            "description" : "Command: {}\n\n Output Satus: {}".format(a, b),
-            "title" : "Console Command Executed!"
+            "color" : "{}".format(a),
+            "description" : "Activity: {}\n\n Time of Log: {}".format(b, c),
+            "title" : "Event Logged!"
         }
     ]
 
