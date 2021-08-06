@@ -30,7 +30,6 @@ if test -d $HOME/SimpleManager/
      echo Folder Created
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -O $DIR/discord_log.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 	 source $HOME/SimpleManager/global.var
@@ -48,7 +47,6 @@ else
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/discord_log.sh -O $DIR/discord_log.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 clear
@@ -96,7 +94,7 @@ clear
 adminCheck
 ##
 
-##main menu function 1##
+##main menu function 4##
 setWebhook () {
  if [[ -f $DIR/webhook.py ]]; then
     echo "Looks like you already have a webhook setup, would you like to remove it?"
@@ -116,14 +114,52 @@ setWebhook () {
   echo "To setup discord notifcaitons, create a webhook on your discord server."
   echo "Please paste the Webhook URL below and press enter..."
   read -p '' WEBHOOK
-  echo "$WEBHOOK_URL" >> $DIR/webhook.txt
+  echo "$WEBHOOK" >> $DIR/webhook.txt
   sudo /bin/cat <<-EOM >>$DIR/webhook.py
 url = '$WEBHOOK'
 EOM
   echo 'Webhook set!'
   echo "Press enter to return to main menu..."
   read -p ''
+  requiredReposCheck
   fi
+}
+##main menu function 2##
+startScripts() {
+##start scripts##
+screen -S autoupdate -d -m sudo bash $DIR/autoupdate.sh
+##
+LogInput="Warning: All scripts should now be online..."
+$log
+sleep 10;
+python3 send.py "$whBLUE" "$whlog"
+
+}
+##main menu function 3##
+stopScripts () {
+screen -ls
+echo "Would you like to restart the scripts?"
+case $yn in
+	[Yy]* ) 
+	LogInput="WARNING! ALL SERVER SCRIPTS ARE RESTARTING. EACH SCRIPT SHOULD SEND A MESSAGE WHEN SUCCESSFUL..."
+	$log
+	python3 send.py "$whRED" "$whlog"
+	sleep 5;
+	##kill screens
+	screen -X -S autoupdate quit
+	##
+	
+	startScripts
+	[Nn]* ) 
+  echo "Press enter to return to main menu..."
+  read -p ''
+  mainMenu
+  ;;
+   * ) echo "Please answer yes or no.";;
+    esac
+fi
+else
+mainMenu
 }
 
 mainMenu () {
@@ -135,9 +171,9 @@ echo -e "##############################################################
 ##############################################################
 \n
 1)Dump Log File\n\
-2)Check Running Scripts\n\
-3)Start a Bot \n\
-4)Setup Discord Notifications(Webhooks)
+2)Start Scripts\n\
+3)View / Restart Scripts\n\
+4)Setup Discord Notifications(Webhooks)\n\
 5)Exit
 "
 read -p '>>' -e MenuProcessor
@@ -145,11 +181,20 @@ echo "$(tput sgr0)"
 
 if [[ "$MenuProcessor" = "1" ]]; then
 ##Dump 99 lines of log##
-bash discord_log.sh "logDump"
+bash log.sh "logDump"
+mainMenu
+fi
+if [[ "$MenuProcessor" = "2" ]]; then
+startScripts
+mainMenu
+fi
+if [[ "$MenuProcessor" = "3" ]]; then
+stopScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "4" ]]; then
 setWebhook
+mainMenu
 fi
 }
 mainMenu

@@ -21,7 +21,7 @@ tail -n 99 <$FILE   > logfile.txt
 curl \
   -F 'payload_json={"username": "Botty McBotFace", "content": "@everyone"}' \
   -F "file1=@logfile.txt" \
-  $URL
+  $WEBHOOK_URL
   sleep 1;
   rm logfile.txt
 }
