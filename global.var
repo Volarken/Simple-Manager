@@ -6,3 +6,6 @@ TIME0=$(date)           #This stores the current time inside of a variable calle
 serverip=`curl -s https://ipinfo.io/ip`
 WEBVERSION=$(curl -s "https://raw.githubusercontent.com/Volarken/Simple-Manager/main/version-maintain.txt")
 WEBHOOK_URL=$(cat $DIR/webhook.txt) 
+whRED="16711680"
+whBLUE="33023"
+whGREEN="65408"

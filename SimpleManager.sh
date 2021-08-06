@@ -42,6 +42,7 @@ if [ "$APIVERSION" = "$WEBVERSION" ]; then
 bash log.sh "Script up to date, last update check ran on $TIME0"
 requiredReposCheck
 else
+	 bash log.sh "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
@@ -84,11 +85,63 @@ then
   sudo apt-get install fail2ban
   sudo apt-get update   
 fi
+  
 clear
 }
+
+##Start running functions##
 adminCheck
+##
 
+##main menu function 1##
+setWebhook () {
+ if [[ -f $DIR/webhook.txt ]]; then
+    echo "Looks like you already have a webhook setup, would you like to remove it?"
+    echo "Y/N"
+    read -p '' -e quickChoice
+      if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
+      sudo rm -Rf $DIR/webhook.txt
+      fi
+        if [[ "$quickChoice" = "N" || "n" ]]; then 
+        echo "Currently we do not allow multiple webhooks, we do plan to add this support soon." 
+        echo "Press enter to return to main menu"
+        read -p ''
+        requiredReposCheck
+        fi
+        else
+  echo "To setup discord notifcaitons, create a webhook on your discord server."
+  echo "Please paste the Webhook URL below and press enter..."
+  read -p '' WEBHOOK
+  echo "$WEBHOOK" >> $DIR/webhook.txt
+  echo 'Webhook set!'
+  echo "Press enter to return to main menu..."
+  read -p ''
+  fi
+}
 
+mainMenu () {
+##MAIN MENU##
+clear
+echo "$(tput setaf 2)"
+echo -e "##############################################################
+#Welcome to the Discordhost.com Bot Setup & Management System#
+##############################################################
+\n
+1)Dump Log File\n\
+2)Check Running Scripts\n\
+3)Start a Bot \n\
+4)Setup Discord Notifications(Webhooks)
+5)Exit
+"
+read -p '>>' -e MenuProcessor
+echo "$(tput sgr0)"
 
+if [[ "$MenuProcessor" = "1"
+##Dump 99 lines of log##
+bash discord_log.sh "logDump"
+mainMenu
 
+if [[ "$MenuProcessor" = "2" ]];
+}
+mainMenu
 

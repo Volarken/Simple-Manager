@@ -5,9 +5,9 @@ source $HOME/SimpleManager/global.var
 ##Child Script Variables##
 declare -i DAYS
 ##
-
-bash log "AutoUpdate/Restart script is now online."
-bash bash discord_log "7"
+LogInput="AutoUpdate/Restart script is now online."
+bash log "$LogInput"
+bash bash discord_log "hookSend" "$LogInput" "whGREEN"
 while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the script is constantly looping.
 TIME1=$(date +%H:%M)          #This stores the current time inside of a variable called TIME1
 sleep 10;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
@@ -19,25 +19,31 @@ sleep 10;                     #This puts a delay on how fast the script can run,
   bash discord_log "7"
   fi
   if [[ "$DAYS" = "7" ]]; then
-  bash log "WARNING, '$serverip' will restart in 10 seconds... A second message should send when the server has successfully rebooted..."
-  bash discord_log "7"
+  LogInput="WARNING, '$serverip' will restart in 10 seconds... A second message should send when the server has successfully rebooted..."
+  bash log "$LogInput"
+  bash bash discord_log "hookSend" "$LogInput" "whRED"
   sudo reboot
   fi
   if [[ "$DAYS" = "14" ]]; then
   DAYS=0
   if ! { sudo apt-get update 2>&1 || echo E: update failed; } | grep -q '^[WE]:'; then #run update and check for errors
-		bash log "SERVER UPDATE SUCCESSFUL"
-		bash discord_log "7"
+		LogInput="SERVER UPDATE SUCCESSFUL. $TIME0"
+		  bash log "$LogInput"
+		  bash bash discord_log "hookSend" "$LogInput" "whGREEN"
 		else
-		bash log "ERROR, UPDATE ON '$serverip' FAILED."
+		LogInput="ERROR, UPDATE ON '$serverip' FAILED."
+		 bash log "$LogInput"
+		 bash bash discord_log "hookSend" "$LogInput" "whRED"
 		fi
 		
 	  if ! { sudo apt-get upgrade 2>&1 || echo E: upgrade failed; } | grep -q '^[WE]:'; then #run upgrade and check for errors
-		bash log "SERVER UPGRADE SUCCESSFUL"
-		bash discord_log "7"
+		LogInput="SERVER UPGRADE SUCCESSFUL"
+		bash log "$LogInput"
+		bash bash discord_log "hookSend" "$LogInput" "whGREEN"
 		else
-		bash log "ERROR, UPGRADE ON '$serverip' FAILED."
-		bash discord_log "7"
+		LogInput="ERROR, UPGRADE ON '$serverip' FAILED. $TIME0"
+		bash log "$LogInput"
+		bash bash discord_log "hookSend" "$LogInput" "whRED"
 		fi
   fi
 done
