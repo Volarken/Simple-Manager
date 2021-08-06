@@ -1,6 +1,7 @@
 #!/bin/bash
 ##Admin Check##
 ##function 1##
+DIR="$HOME/SimpleManager"
 adminCheck () {
 if [[ "$EUID" -ne 0 ]]; then
  echo -e "This script interacts with folders that only the administrator has access  to.\n please run as root/with the sudo command."
