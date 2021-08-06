@@ -124,7 +124,7 @@ mainMenu () {
 clear
 echo "$(tput setaf 2)"
 echo -e "##############################################################
-#Welcome to the Discordhost.com Bot Setup & Management System#
+#Welcome to the Simple Management System#
 ##############################################################
 \n
 1)Dump Log File\n\
