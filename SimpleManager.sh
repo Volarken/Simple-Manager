@@ -22,6 +22,7 @@ firstTimeCheck () {
 if test -d $HOME/SimpleManager/
      then
 	 source $HOME/SimpleManager/global.var
+	 cd $DIR
 	 updateCheck
      echo
     ##
@@ -29,7 +30,7 @@ if test -d $HOME/SimpleManager/
      sudo mkdir $HOME/SimpleManager/
      echo Folder Created
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 	 source $HOME/SimpleManager/global.var
@@ -40,13 +41,13 @@ if test -d $HOME/SimpleManager/
 ##function 3##
 updateCheck(){
 if [ "$APIVERSION" = "$WEBVERSION" ]; then
-bash $DIR/log.sh "Script up to date, last update check ran on $TIME0"
+bash log "Script up to date, last update check ran on $TIME0"
 requiredReposCheck
 else
-	 bash $DIR/log.sh "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
+	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log.sh -O $DIR/log.sh
+	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 clear
@@ -96,13 +97,13 @@ adminCheck
 
 ##main menu function 4##
 setWebhook () {
- if [[ -f $DIR/webhook.py ]]; then
+ if [[ -f webhook.py ]]; then
     echo "Looks like you already have a webhook setup, would you like to remove it?"
     echo "Y/N"
     read -p '' -e quickChoice
       if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
-      sudo rm -Rf $DIR/webhook.py
-	  sudo rm -Rf $DIR/webhook.txt
+      sudo rm -Rf webhook.py
+	  sudo rm -Rf webhook.txt
       fi
         if [[ "$quickChoice" = "N" || "n" ]]; then 
         echo "Currently we do not allow multiple webhooks, we do plan to add this support soon." 
@@ -114,8 +115,8 @@ setWebhook () {
   echo "To setup discord notifcaitons, create a webhook on your discord server."
   echo "Please paste the Webhook URL below and press enter..."
   read -p '' WEBHOOK
-  echo "$WEBHOOK" >> $DIR/webhook.txt
-  sudo /bin/cat <<-EOM >>$DIR/webhook.py
+  echo "$WEBHOOK" >> webhook.txt
+  sudo /bin/cat <<-EOM >>webhook.py
 url = '$WEBHOOK'
 EOM
   echo 'Webhook set!'
@@ -127,37 +128,71 @@ EOM
 ##main menu function 2##
 startScripts() {
 ##start scripts##
-screen -S autoupdate -d -m sudo bash $DIR/autoupdate.sh
-##
+echo "The following scripts were found; select one to start...:"
+# set the prompt used by select, replacing "#?"
+echo "Use number to select a file or 'stop' to return to main menu: "
+# allow the user to choose a file
+select filename in *.sh
+do
+    # leave the loop if the user says 'stop'
+    if [[ "$REPLY" == stop ]]; then break; fi
+
+    # complain if no file was selected, and loop to ask again
+    if [[ "$filename" == "" ]]
+    then
+        echo "'$REPLY' is not a valid number"
+        continue
+    fi
+
+    # now we can use the selected file
+	if test -f /etc/init.d/$filename ; then
+	sudo rm -Rf /etc/init.d/$filename
+	fi
+	sudo /bin/cat <<-EOM >>/etc/init.d/$filename
+		#!/bin/bash
+		start="$filename"
+		screen -S $filename -d -m sudo bash $filename
+EOM
+	sudo chmod +x /etc/init.d/$filename
+	LogInput="Attempting to start script $filename ... "
+	bash log "$LogInput"
+	echo $LogInput
+	if test ! -f /etc/init.d/$filename ; then
+	LogInput="ERROR: Script has not been added to startup."
+	echo $LogInput
+	bash log "$LogInput"
+	python3 send.py "$whRED" "$LogInput" "$TIME0"
+	fi
+	if ! screen -list | grep -q "$filename"; then
+   screen -S $filename -d -m sudo bash $filename
+	else
+	LogInput="ERROR while starting $filename ... Screen already running..."
+	bash log "$LogInput"
+	echo $LogInput
+	fi
+done
+#back to my original code.#
 LogInput="Warning: All scripts should now be online..."
-sudo bash $DIR/log.sh "$LogInput"
-sleep 10;
+sudo bash log "$LogInput"
+sleep 2;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
+
 ##main menu function 3##
 stopScripts () {
 screen -ls
 echo "Would you like to restart the scripts? Y/N"
 read -e '' yn
-case $yn in
-	[Yy]* ) 
+if [[ "$yn" = "y" || "$yn" = "Y" ]]; then
 	LogInput="WARNING! ALL SERVER SCRIPTS ARE RESTARTING. EACH SCRIPT SHOULD SEND A MESSAGE WHEN SUCCESSFUL..."
-	sudo bash $DIR/log.sh "$LogInput"
+	sudo bash log "$LogInput"
 	python3 send.py "$whRED" "$LogInput" "$TIME0"
 	sleep 5;
 	##kill screens
 	screen -X -S autoupdate quit
 	##
-	
 	startScripts
-	;;
-	[Nn]* ) 
-  echo "Press enter to return to main menu..."
-  read -p ''
-  mainMenu
-  ;;
-   * ) echo "Please answer yes or no.";;
-    esac
+fi
 mainMenu
 }
 
@@ -182,7 +217,7 @@ echo -e "##############################################################
 ##############################################################
 \n
 1)Dump Log File\n\
-2)Start Scripts\n\
+2)Start/Enable Scripts\n\
 3)View / Restart Scripts\n\
 4)Setup Discord Notifications(Webhooks)\n\
 5)Exit

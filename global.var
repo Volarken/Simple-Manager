@@ -9,4 +9,3 @@ WEBHOOK_URL=$(cat $DIR/webhook.txt)
 whRED="16711680"
 whBLUE="33023"
 whGREEN="65408"
-log=$(sudo bash log.sh "log" "$LogInput")
