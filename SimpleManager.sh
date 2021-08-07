@@ -151,7 +151,7 @@ do
 	sudo /bin/cat <<-EOM >>/etc/init.d/$filename
 		#!/bin/bash
 		start="$filename"
-		screen -S $filename -d -m sudo bash $filename
+		screen -S $DIR/$filename -d -m sudo bash $filename
 EOM
 	sudo chmod +x /etc/init.d/$filename
 	LogInput="Attempting to start script $filename ... "
