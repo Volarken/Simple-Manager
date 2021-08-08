@@ -150,8 +150,9 @@ do
 	fi
 	sudo /bin/cat <<-EOM >>/etc/init.d/$filename
 		#!/bin/bash
+		DIR="$HOME/SimpleManager"
 		start="$filename"
-		screen -S $DIR/$filename -d -m sudo bash $filename
+		screen -S $start -d -m sudo bash $DIR/$start
 EOM
 	sudo chmod +x /etc/init.d/$filename
 	LogInput="Attempting to start script $filename ... "
@@ -180,20 +181,55 @@ python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 
 ##main menu function 3##
 stopScripts () {
-screen -ls
-echo "Would you like to restart the scripts? Y/N"
-read -e '' yn
-if [[ "$yn" = "y" || "$yn" = "Y" ]]; then
-	LogInput="WARNING! ALL SERVER SCRIPTS ARE RESTARTING. EACH SCRIPT SHOULD SEND A MESSAGE WHEN SUCCESSFUL..."
-	sudo bash log "$LogInput"
+echo "The following scripts were found; select one to stop...:"
+# set the prompt used by select, replacing "#?"
+echo "Use number to select a file or 'stop' to return to main menu: "
+# allow the user to choose a file
+select filename in /etc/init.d/*.sh
+do
+    # leave the loop if the user says 'stop'
+    if [[ "$REPLY" == stop ]]; then break; fi
+
+    # complain if no file was selected, and loop to ask again
+    if [[ "$filename" == "" ]]
+    then
+        echo "'$REPLY' is not a valid number"
+        continue
+    fi
+
+    # now we can use the selected file
+	if test -f /etc/init.d/$filename ; then
+	sudo rm -Rf /etc/init.d/$filename
+	fi
+	sudo /bin/cat <<-EOM >>/etc/init.d/$filename
+		#!/bin/bash
+		DIR="$HOME/SimpleManager"
+		start="$filename"
+		screen -S $start -d -m sudo bash $DIR/$start
+EOM
+	sudo chmod +x /etc/init.d/$filename
+	LogInput="Attempting to start script $filename ... "
+	bash log "$LogInput"
+	echo $LogInput
+	if test ! -f /etc/init.d/$filename ; then
+	LogInput="ERROR: Script has not been added to startup."
+	echo $LogInput
+	bash log "$LogInput"
 	python3 send.py "$whRED" "$LogInput" "$TIME0"
-	sleep 5;
-	##kill screens
-	screen -X -S autoupdate quit
-	##
-	startScripts
-fi
-mainMenu
+	fi
+	if ! screen -list | grep -q "$filename"; then
+   screen -S $filename -d -m sudo bash $filename
+	else
+	LogInput="ERROR while starting $filename ... Screen already running..."
+	bash log "$LogInput"
+	echo $LogInput
+	fi
+done
+#back to my original code.#
+LogInput="Warning: All scripts should now be online..."
+sudo bash log "$LogInput"
+sleep 2;
+python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
 
 logDump () {
