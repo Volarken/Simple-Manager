@@ -1,7 +1,7 @@
 #!/bin/bash
 ##Admin Check##
 ##function 1##
-DIR="$HOME/SimpleManager"
+DIR="/etc/SimpleManager"
 adminCheck () {
 if [[ "$EUID" -ne 0 ]]; then
  echo -e "This script interacts with folders that only the administrator has access  to.\n please run as root/with the sudo command."
@@ -19,21 +19,21 @@ fi
 #Detect if Folder exits, if not, assume first time run, create folder and download scripts.#
 ##function 2##
 firstTimeCheck () {
-if test -d $HOME/SimpleManager/
+if test -d /etc/SimpleManager/
      then
-	 source $HOME/SimpleManager/global.var
+	 source /etc/SimpleManager/global.var
 	 cd $DIR
 	 updateCheck
      echo
     ##
     else
-     sudo mkdir $HOME/SimpleManager/
+     sudo mkdir /etc/SimpleManager/
      echo Folder Created
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
-	 source $HOME/SimpleManager/global.var
+	 source /etc/SimpleManager/global.var
 	 updateCheck
       fi
 }

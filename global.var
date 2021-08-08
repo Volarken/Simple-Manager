@@ -1,7 +1,7 @@
 TAB="$(printf '\t')"
 APIVERSION="PRIVATE RELEASE 0.0.1 - 08/05/2021 4PM"
-FILE="$HOME/SimpleManager/log.txt" #This is where the log file will be stored. 
-DIR="$HOME/SimpleManager"
+FILE="/etc/SimpleManager/log.txt" #This is where the log file will be stored. 
+DIR="/etc/SimpleManager"
 TIME0=$(date)           #This stores the current time inside of a variable called TIME0
 serverip=`curl -s https://ipinfo.io/ip`
 WEBVERSION=$(curl -s "https://raw.githubusercontent.com/Volarken/Simple-Manager/main/version-maintain.txt")
