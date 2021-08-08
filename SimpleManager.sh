@@ -34,6 +34,7 @@ if test -d /etc/SimpleManager/
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 	 source /etc/SimpleManager/global.var
+	 cd $DIR
 	 updateCheck
       fi
 }
@@ -150,7 +151,7 @@ do
 	fi
 	sudo /bin/cat <<-EOM >>/etc/init.d/$filename
 		#!/bin/bash
-		DIR="$HOME/SimpleManager"
+		DIR="/etc/SimpleManager"
 		start="$filename"
 		screen -S $start -d -m sudo bash $DIR/$start
 EOM
@@ -203,7 +204,7 @@ do
 	fi
 	sudo /bin/cat <<-EOM >>/etc/init.d/$filename
 		#!/bin/bash
-		DIR="$HOME/SimpleManager"
+		DIR="/etc/SimpleManager"
 		start="$filename"
 		screen -S $start -d -m sudo bash $DIR/$start
 EOM

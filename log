@@ -1,6 +1,6 @@
 #!/bin/bash
 #Global Variables##
-source $HOME/SimpleManager/global.var
+source /etc/SimpleManager/global.var
 WEBHOOK_URL=$(cat $DIR/webhook.txt)
 TIME0=$(date)    
 sudo /bin/cat <<-EOM >>$FILE
