@@ -16,10 +16,9 @@ if [[ "$EUID" -ne 0 ]]; then
  firstTimeCheck
 fi
 }
-#Detect if Folder exits, if not, assume first time run, create folder and download scripts.#
 ##function 2##
 firstTimeCheck () {
-if test -d /etc/SimpleManager/
+if test -d /etc/SimpleManager/	
      then
 	 source /etc/SimpleManager/global.var
 	 cd $DIR
@@ -27,6 +26,30 @@ if test -d /etc/SimpleManager/
      echo
     ##
     else
+	 if test ! -f /etc/systemd/system/rc-local.service ; then
+	 bash log "RC-LOCAL.SERVICE not detected, will generate now"
+	 sudo /bin/cat <<-EOM >>/etc/systemd/system/rc-local.service
+[Unit]
+ Description=/etc/rc.local Compatibility
+ ConditionPathExists=/etc/rc.local
+
+[Service]
+ Type=forking
+ ExecStart=/etc/rc.local start
+ TimeoutSec=0
+ StandardOutput=tty
+ RemainAfterExit=yes
+ SysVStartPriority=99
+
+[Install]
+ WantedBy=multi-user.target
+EOM
+fi
+if test ! -f /etc/rc.local ; then
+	 bash log "/etc/rc.local not detected, will generate now."
+	printf '%s\n' '#!/bin/bash' 'exit 0' | sudo tee -a /etc/rc.local
+	sudo chmod +x /etc/rc.local
+	 fi
      sudo mkdir /etc/SimpleManager/
      echo Folder Created
 	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
@@ -60,7 +83,7 @@ fi
 requiredReposCheck () { 
 if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
-  bash log "Missing python3" "One or more required repositories are not installed, will aquire now at $TIME0"
+  bash log "Missing python3" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will aquire them now. This may take a while. 
   read -O 'Press enter to continue.'
   sudo apt-get install python3
@@ -70,8 +93,8 @@ then
 fi
 if [ $(dpkg-query -W -f='${Status}' screen 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
-  bash log "Missing screen" "One or more required repositories are not installed, will aquire now at $TIME0"
-  echo You are missing required files, we will aquire them now. This may take a while. 
+  bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
+  echo You are missing required files, we will acquire them now. This may take a while. 
   read -O 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
@@ -80,8 +103,8 @@ then
 fi
 if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
-  bash log "Missing screen" "One or more required repositories are not installed, will aquire now at $TIME0"
-  echo You are missing required files, we will aquire them now. This may take a while. 
+  bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
+  echo You are missing required files, we will acquire them now. This may take a while. 
   read -O 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
@@ -146,32 +169,36 @@ do
     fi
 
     # now we can use the selected file
-	if test -f /etc/init.d/$filename ; then
-	sudo rm -Rf /etc/init.d/$filename
-	fi
-	sed -i "`wc -l < /etc/rc.local`i\\screen -S $filename -d -m sudo bash /etc/SimpleManager/$filename -\\" /etc/rc.local
-	sudo chmod +x /etc/init.d/$filename
-	LogInput="Attempting to start script $filename ... "
+	if grep -qwF "$filename" /etc/rc.local ; then
+	LogInput="Adding $filename to startup scripts... "
 	bash log "$LogInput"
 	echo $LogInput
-	if test ! -f /etc/init.d/$filename ; then
+    sed -i "`wc -l < /etc/rc.local`i\\screen -S $filename -d -m sudo bash /etc/SimpleManager/$filename -\\" /etc/rc.local
+	LogInput="Restarting & Enabling RC-Local... "
+	bash log "$LogInput"
+	echo $LogInput
+	systemctl restart rc-local
+	systemctl enable rc-local
+	echo "Script $filename should now be online. Check discord for notification."
+else
+	LogInput="Restarting & Enabling RC-Local... "
+	bash log "$LogInput"
+	echo $LogInput
+    systemctl restart rc-local
+	systemctl enable rc-local
+	echo "Script $filename should now be online. Check discord for notification."
+fi
+	if grep -qwF "$filename" /etc/rc.local ; then
 	LogInput="ERROR: Script has not been added to startup."
 	echo $LogInput
 	bash log "$LogInput"
 	python3 send.py "$whRED" "$LogInput" "$TIME0"
 	fi
-	if ! screen -list | grep -q "$filename"; then
-   screen -S $filename -d -m sudo bash $filename
-	else
-	LogInput="ERROR while starting $filename ... Screen already running..."
-	bash log "$LogInput"
-	echo $LogInput
-	fi
 done
 #back to my original code.#
 LogInput="Warning: All scripts should now be online..."
 sudo bash log "$LogInput"
-sleep 2;
+sleep 1;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
 
