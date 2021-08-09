@@ -149,12 +149,7 @@ do
 	if test -f /etc/init.d/$filename ; then
 	sudo rm -Rf /etc/init.d/$filename
 	fi
-	sudo /bin/cat <<-EOM >>/etc/init.d/$filename
-		#!/bin/bash
-		DIR="/etc/SimpleManager"
-		start="$filename"
-		screen -S $start -d -m sudo bash $DIR/$start
-EOM
+	sed -i "`wc -l < /etc/rc.local`i\\screen -S $filename -d -m sudo bash /etc/SimpleManager/$filename -\\" /etc/rc.local
 	sudo chmod +x /etc/init.d/$filename
 	LogInput="Attempting to start script $filename ... "
 	bash log "$LogInput"
