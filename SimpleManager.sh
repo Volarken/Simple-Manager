@@ -120,11 +120,23 @@ adminCheck
 ##
 
 ##main menu function 4##
+webhookWarning() {
+if test ! -f webhook.py ; then
+echo "WARNING: Using functions in this script before setting discord webhook could cause errors..."
+echo "Would you like to set a webhook now?"
+echo "Y/N"
+ read -p '>>' -e quickChoice
+      if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
+      setWebhook
+	  fi
+	 fi
+}
+
 setWebhook () {
  if [[ -f webhook.py ]]; then
     echo "Looks like you already have a webhook setup, would you like to remove it?"
     echo "Y/N"
-    read -p '' -e quickChoice
+    read -p '>>' -e quickChoice
       if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
       sudo rm -Rf webhook.py
 	  sudo rm -Rf webhook.txt
@@ -138,7 +150,7 @@ setWebhook () {
         else
   echo "To setup discord notifcaitons, create a webhook on your discord server."
   echo "Please paste the Webhook URL below and press enter..."
-  read -p '' WEBHOOK
+  read -p '>>' WEBHOOK
   echo "$WEBHOOK" >> webhook.txt
   sudo /bin/cat <<-EOM >>webhook.py
 url = '$WEBHOOK'
@@ -207,50 +219,22 @@ mainMenu
 
 ##main menu function 3##
 restartScripts () {
-echo "The following scripts were found; select one to stop...:"
-# set the prompt used by select, replacing "#?"
-echo "Use number to select a file or 'stop' to return to main menu: "
-# allow the user to choose a file
-select filename in /etc/init.d/*.sh
-do
-    # leave the loop if the user says 'stop'
-    if [[ "$REPLY" == stop ]]; then break; fi
+clear
+echo "Here are the current running scripts..."
+sudo screen -ls
+echo "Would you like to restart all scripts?"
+echo "Y/N"
+ read -p '>>' -e quickChoice
+      if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
+	  LogInput="WARNING: ALL SCRIPTS ARE RESTARTING, WATCH DISCORD NOTIFCATIONS FOR VERIFICATION OF SUCCESSFUL STARTUP FOR EACH SCRIPT..."
+	sudo bash log "$LogInput"
+	sleep 1;
+	python3 send.py "$whBLUE" "$LogInput" "$TIME0"
+    systemctl restart rc-local
+     else
+	 echo "Returning to main menu..."
+	 fi
 
-    # complain if no file was selected, and loop to ask again
-    if [[ "$filename" == "" ]]
-    then
-        echo "'$REPLY' is not a valid number"
-        continue
-    fi
-
-    # now we can use the selected file
-	if test -f /etc/init.d/$filename ; then
-	sudo rm -Rf /etc/init.d/$filename
-	fi
-	sudo /bin/cat <<-EOM >>/etc/init.d/$filename
-		#!/bin/bash
-		DIR="/etc/SimpleManager"
-		start="$filename"
-		screen -S $start -d -m sudo bash $DIR/$start
-EOM
-	sudo chmod +x /etc/init.d/$filename
-	LogInput="Attempting to start script $filename ... "
-	bash log "$LogInput"
-	echo $LogInput
-	if test ! -f /etc/init.d/$filename ; then
-	LogInput="ERROR: Script has not been added to startup."
-	echo $LogInput
-	bash log "$LogInput"
-	python3 send.py "$whRED" "$LogInput" "$TIME0"
-	fi
-	if ! screen -list | grep -q "$filename"; then
-   screen -S $filename -d -m sudo bash $filename
-	else
-	LogInput="ERROR while starting $filename ... Screen already running..."
-	bash log "$LogInput"
-	echo $LogInput
-	fi
-done
 #back to my original code.#
 LogInput="Warning: All scripts should now be online..."
 sudo bash log "$LogInput"
@@ -281,7 +265,8 @@ echo -e "##############################################################
 1)Dump Log File\n\
 2)Start/Enable Scripts\n\
 3)View / Restart Scripts\n\
-4)Setup Discord Notifications(Webhooks)\n\
+4)Remove Script from Startup\n\
+5)Setup Discord Notifications(Webhooks)\n\
 5)Exit
 "
 read -p '>>' -e MenuProcessor
@@ -289,18 +274,26 @@ echo "$(tput sgr0)"
 
 if [[ "$MenuProcessor" = "1" ]]; then
 ##Dump 99 lines of log##
+webhookWarning
 logDump
 mainMenu
 fi
 if [[ "$MenuProcessor" = "2" ]]; then
+webhookWarning
 startScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "3" ]]; then
+webhookWarning
 restartScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "4" ]]; then
+webhookWarning
+removeScripts
+mainMenu
+fi
+if [[ "$MenuProcessor" = "5" ]]; then
 setWebhook
 mainMenu
 fi
