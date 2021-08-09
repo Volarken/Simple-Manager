@@ -1,6 +1,7 @@
 #!/bin/bash
 #Global Variables##
 source global.var
+cd /etc/SimpleManager/
 
 
 ##Child Script Variables##
@@ -13,7 +14,9 @@ while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the scrip
 TIME1=$(date +%H:%M)          #This stores the current time inside of a variable called TIME1
 sleep 10;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
   if [[ "$TIME1" = "20:00" ]]; then     #This statement says that once TIME0(current time) is equal to 8 PM then run the script.
+  DAYS=$(cat $DIR/d.txt)
   DAYS=$DAYS+1
+  echo "$DAYS" > $DIR/d.txt  
   DTR=$((7-$DAYS))
   DTU=$((14-$DAYS))
   LogInput="AutoUpdate/Restart check ran successfully at $TIME0" "Days until next restart '$DTR'" "Days until next update '$DTU'"
@@ -21,7 +24,7 @@ sleep 10;                     #This puts a delay on how fast the script can run,
   python3 send.py "$whGREEN" "$LogInput" "$TIME0"
   fi
   if [[ "$DAYS" = "7" ]]; then
-  LogInput="WARNING, '$serverip' will restart in 10 seconds... A second message should send when the server has successfully rebooted..."
+  LogInput="WARNING, $serverip will restart in 10 seconds... A second message should send when the server has successfully rebooted..."
   sudo bash log "$LogInput"
   python3 send.py "$whRED" "$LogInput" "$TIME0"
   sleep 10;
@@ -29,6 +32,7 @@ sleep 10;                     #This puts a delay on how fast the script can run,
   fi
   if [[ "$DAYS" = "14" ]]; then
   DAYS=0
+  echo "$DAYS" > $DIR/d.txt  
   if ! { sudo apt-get update 2>&1 || echo E: update failed; } | grep -q '^[WE]:'; then #run update and check for errors
 		LogInput="SERVER UPDATE SUCCESSFUL."
 		  sudo bash log "$LogInput"
