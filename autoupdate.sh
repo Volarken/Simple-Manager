@@ -15,7 +15,7 @@ TIME1=$(date +%H:%M)          #This stores the current time inside of a variable
 sleep 10;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
   if [[ "$TIME1" = "20:00" ]]; then     #This statement says that once TIME0(current time) is equal to 8 PM then run the script.
   DAYS=$(cat $DIR/d.txt)
-  DAYS=$DAYS+1
+  DAYS=$DAYS+1	#
   echo "$DAYS" > $DIR/d.txt  
   DTR=$((7-$DAYS))
   DTU=$((14-$DAYS))
