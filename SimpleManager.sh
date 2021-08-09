@@ -152,6 +152,8 @@ EOM
 ##main menu function 2##
 startScripts() {
 ##start scripts##
+clear
+echo "WARNING : All scripts when a new script is enabled..."
 echo "The following scripts were found; select one to start...:"
 # set the prompt used by select, replacing "#?"
 echo "Use number to select a file or 'stop' to return to main menu: "
@@ -200,10 +202,11 @@ LogInput="Warning: All scripts should now be online..."
 sudo bash log "$LogInput"
 sleep 1;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
+mainMenu
 }
 
 ##main menu function 3##
-stopScripts () {
+restartScripts () {
 echo "The following scripts were found; select one to stop...:"
 # set the prompt used by select, replacing "#?"
 echo "Use number to select a file or 'stop' to return to main menu: "
@@ -294,7 +297,7 @@ startScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "3" ]]; then
-stopScripts
+restartScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "4" ]]; then
