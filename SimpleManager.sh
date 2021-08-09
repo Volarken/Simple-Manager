@@ -289,9 +289,10 @@ restartScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "4" ]]; then
-webhookWarning
-removeScripts
-mainMenu
+echo "WARNING: Not yet programmed, im getting to it though :)"
+#webhookWarning
+#removeScripts
+#mainMenu
 fi
 if [[ "$MenuProcessor" = "5" ]]; then
 setWebhook
