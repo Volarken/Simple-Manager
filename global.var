@@ -1,5 +1,5 @@
 TAB="$(printf '\t')"
-APIVERSION="PRIVATE RELEASE 0.0.1 - 08/05/2021 4PM"
+APIVERSION="PRIVATE RELEASE 0.1.1 - 08/05/2021 4PM"
 FILE="/etc/SimpleManager/log.txt" #This is where the log file will be stored. 
 DIR="/etc/SimpleManager"
 TIME0=$(date)           #This stores the current time inside of a variable called TIME0
