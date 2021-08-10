@@ -16,10 +16,23 @@ if [[ "$EUID" -ne 0 ]]; then
  firstTimeCheck
 fi
 }
-##function 2##
+
+##function 3##
 firstTimeCheck () {
 if test -d /etc/SimpleManager/	
      then
+	 if test ! -f /etc/SimpleManager/global.var ; then
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
+	fi
+	if test ! -f /etc/SimpleManager/autoupdate.sh ; then
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	fi
+	if test ! -f /etc/SimpleManager/send.py ; then
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	fi
+	if test ! -f /etc/SimpleManager/log ; then
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
+	fi
 	 source /etc/SimpleManager/global.var
 	 cd $DIR
 	 updateCheck
@@ -52,10 +65,10 @@ if test ! -f /etc/rc.local ; then
 	 fi
      sudo mkdir /etc/SimpleManager/
      echo Folder Created
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 	 source /etc/SimpleManager/global.var
 	 cd $DIR
 	 updateCheck
@@ -69,11 +82,11 @@ bash log "Script up to date, last update check ran on $TIME0"
 requiredReposCheck
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
-	 sudo sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 clear
 sudo bash "$0"
 fi
