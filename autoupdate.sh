@@ -23,7 +23,7 @@ sleep 10;                     #This puts a delay on how fast the script can run,
   DTR=$((7-$DAYS))
   fi
   DTU=$((14-$DAYS))
-  LogInput="AutoUpdate/Restart check ran successfully at $TIME0 Days until next restart $DTR Days until next update $DTU"
+  LogInput="AutoUpdate/Restart check ran successfully at $TIME0 | Days until next restart $DTR | Days until next update $DTU"
   sudo bash log "$LogInput"
   python3 send.py "$whGREEN" "$LogInput" "$TIME0"
   fi
