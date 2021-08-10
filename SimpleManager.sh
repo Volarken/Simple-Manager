@@ -87,6 +87,8 @@ then
   echo You are missing required files, we will aquire them now. This may take a while. 
   read -O 'Press enter to continue.'
   sudo apt-get install python3
+  sudo apt-get install python3-pip
+  python3 -m pip install requests
   sudo apt-get install screen
   sudo apt-get install fail2ban
   sudo apt-get update

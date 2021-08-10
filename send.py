@@ -1,7 +1,9 @@
 import requests #dependency
 import sys
 from webhook import *
+from requests import get
 
+ip = get('https://api.ipify.org').text
 if __name__ == "__main__":
     a = str(sys.argv[1])
     b = str(sys.argv[2])
@@ -19,7 +21,10 @@ if __name__ == "__main__":
         {
             "color" : "{}".format(a),
             "description" : "Activity: {}\n\n Time of Log: {}".format(b, c),
-            "title" : "Event Logged!"
+            "title" : "Event Logged!",
+			"footer" : {
+			"text" : "Server IP: {}".format(ip)
+			}
         }
     ]
 
