@@ -18,22 +18,11 @@ fi
 }
 
 ##function 2##
-firstTimeCheck () {		#This function is used to check if the directory /etc/SimpleManager/ exists, if it does not it will assume first time setup
-if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all files exist, if one does not, download it.
-     then
-	 if test ! -f /etc/SimpleManager/global.var ; then	#Does global.var exist?
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var #if no, download it.
-	fi
-	if test ! -f /etc/SimpleManager/autoupdate.sh ; then #Does autoupdate.sh exist?
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh #if no, download it.
-	fi
-	if test ! -f /etc/SimpleManager/send.py ; then	
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py 
-	fi
-	if test ! -f /etc/SimpleManager/log ; then
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
-	fi
-##System startup functions## 
+enableRCLOCAL() {
+if grep -qF "LogLevel INFO" /etc/ssh/sshd_config ; then	#if SSHD is not configured to log, enable it.
+sed -i "s/#LogLevel INFO/LogLevel VERBOSE/" /etc/ssh/sshd_config
+systemctl restart rsyslog
+fi
 if test ! -f /etc/systemd/system/rc-local.service ; then	#If rc-local.service does not exist, create it.
 	 bash log "RC-LOCAL.SERVICE not detected, will generate now"
 	 sudo /bin/cat <<-EOM >>/etc/systemd/system/rc-local.service
@@ -58,13 +47,32 @@ if test ! -f /etc/rc.local ; then	# If rc.local does not exist, create it.
 	printf '%s\n' '#!/bin/bash' 'exit 0' | sudo tee -a /etc/rc.local
 	sudo chmod +x /etc/rc.local
 	 fi
-
+}
 ##	
+
+##function 3##
+firstTimeCheck () {		#This function is used to check if the directory /etc/SimpleManager/ exists, if it does not it will assume first time setup
+if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all files exist, if one does not, download it.
+     then
+	 if test ! -f /etc/SimpleManager/global.var ; then	#Does global.var exist?
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var #if no, download it.
+	fi
+	if test ! -f /etc/SimpleManager/autoupdate.sh ; then #Does autoupdate.sh exist?
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh #if no, download it.
+	fi
+	if test ! -f /etc/SimpleManager/send.py ; then	
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py 
+	fi
+	if test ! -f /etc/SimpleManager/log ; then
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
+	fi
+	 enableRCLOCAL
 	 source /etc/SimpleManager/global.var #Source all variables from global.var
 	 cd $DIR	 # CD into /etc/SimpleManager/ for easier accessibility.
 	 updateCheck # Move to next function.
     ##
     else
+	 enableRCLOCAL
      sudo mkdir /etc/SimpleManager/	#If folder doesn't exist, create it and download all scripts.
      echo Folder Created	
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
@@ -77,7 +85,7 @@ if test ! -f /etc/rc.local ; then	# If rc.local does not exist, create it.
       fi
 }
 #Checks Github for new version of script#
-##function 3##
+##function 4##
 updateCheck(){
 if [ "$APIVERSION" = "$WEBVERSION" ]; then	# If local APIVERSION does not match WEBVERSION, re-install all scripts.
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
@@ -94,7 +102,7 @@ sudo bash "$0"
 fi
 }
 #Installs required repos#
-##function 4##
+##function 5##
 requiredReposCheck () { 
 if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed") -eq 0 ]; #checks if python3 is installed.
 then #To speed things up and patch possible errors, each repo check will attempt to download all of the required repos.
@@ -138,7 +146,7 @@ clear
 adminCheck
 ##
 
-##main menu function 4##
+##main menu function 1##
 webhookWarning() {	#This is a warning that is issued when trying to run script functions that require a webhook.
 if test ! -f webhook.py ; then
 echo "WARNING: Using functions in this script before setting discord webhook could cause errors..."
@@ -150,7 +158,7 @@ echo "Y/N"
 	  fi
 	 fi
 }
-
+##main menu function 2##
 setWebhook () { #Allows you to set custom webhook for the running server.
  if [[ -f webhook.py ]]; then #Notify user if webhook file already exists
     echo "Looks like you already have a webhook setup, would you like to remove it?" 
@@ -181,7 +189,7 @@ EOM
   mainMenu
   fi
 }
-##main menu function 2##
+##main menu function 3##
 startScripts() { #This function is used to add scripts to startup, if already in startup, restart rc-local.service
 ##start scripts##
 clear
@@ -236,7 +244,7 @@ python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 mainMenu
 }
 
-##main menu function 3##
+##main menu function 4##
 restartScripts () { #shows the running screens and allows user to restart all scripts
 echo "Here are the current running scripts..."
 sudo screen -ls
@@ -260,6 +268,7 @@ sleep 2;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
 
+##main menu function 5##
 logDump () { #Dump 99 newest lines of LOG to discord. 
 TIME0=$(date)    
 WEBHOOK_URL=$(cat /etc/SimpleManager/webhook.txt)
