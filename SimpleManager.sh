@@ -188,9 +188,9 @@ clear
 echo "WARNING : All scripts will restart when a new script is enabled..."
 echo "The following scripts were found; select one to start...:"
 # allow the user to choose a file
+echo "Use number to select a file or 'stop' to return to main menu: "
 select filename in *.sh
 do
-echo "Use number to select a file or 'stop' to return to main menu: "
     # leave the loop if the user says 'stop'
     if [[ "$REPLY" == stop ]]; then break; fi
 
@@ -200,7 +200,6 @@ echo "Use number to select a file or 'stop' to return to main menu: "
         echo "'$REPLY' is not a valid number"
         continue
     fi
-
     # now we can use the selected file
 	if ! grep -qwF "$filename" /etc/rc.local ; then	#If the selected file is NOT referenced in rc.local, add it to startup 
 	LogInput="Adding $filename to startup scripts... "
@@ -213,6 +212,7 @@ echo "Use number to select a file or 'stop' to return to main menu: "
 	systemctl restart rc-local
 	systemctl enable rc-local
 	echo "Script $filename should now be online. Check discord for notification."
+  echo "Use number to select a file or 'stop' to return to main menu: "
 else #If the selected file is referenced in rc.local, simply restart & enable rc-local
 	LogInput="Restarting & Enabling RC-Local... "
 	bash log "$LogInput"
