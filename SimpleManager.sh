@@ -60,6 +60,9 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 	if test ! -f /etc/SimpleManager/autoupdate.sh ; then #Does autoupdate.sh exist?
 	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh #if no, download it.
 	fi
+	if test ! -f /etc/SimpleManager/sshlogger.sh ; then 
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
+	fi
 	if test ! -f /etc/SimpleManager/send.py ; then	
 	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py 
 	fi
@@ -76,6 +79,7 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
      sudo mkdir /etc/SimpleManager/	#If folder doesn't exist, create it and download all scripts.
      echo Folder Created	
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
@@ -94,6 +98,7 @@ else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
