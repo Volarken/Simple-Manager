@@ -1,7 +1,8 @@
 #!/bin/bash
 #Global Variables##
-source global.var
 cd /etc/SimpleManager/
+source global.var
+
 
 
 ##Child Script Variables##
