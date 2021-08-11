@@ -103,7 +103,8 @@ else
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 clear
-sudo bash "$0"
+source global.var
+requiredReposCheck
 fi
 }
 #Installs required repos#
