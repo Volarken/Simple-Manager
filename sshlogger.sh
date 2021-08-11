@@ -16,12 +16,12 @@ sleep 10;                     #This puts a delay on how fast the script can run,
 SSHLOG2="$(wc -l < /var/log/auth.log)"
   if [[ "$SSHLOG2" > "$SSHLOG1" ]]; then     #This statement says that once TIME0(current time) is equal to 8 PM then run the script.
   NEWLINES=$((SSHLOG2-SSHLOG1))
-  tail -$NEWLINES /var/log/auth.log | grep 'Accepted password' >> auth.txt
+  tail -$NEWLINES /var/log/auth.log | grep 'Accepted' >> auth.txt
   fi
   if test -f /etc/SimpleManager/auth.txt ; then 
   if grep -qwF "Accepted" /etc/SimpleManager/auth.txt ; then
   NEWCONNECTION=$(cat /etc/SimpleManager/auth.txt)
-  LogInput="WARNING: New connection on server. $NEWCONNECTION "
+  LogInput="New connection on server! -Details- $NEWCONNECTION "
   sudo bash log "$LogInput"
   python3 send.py "$whBLUE" "$LogInput" "$TIME0"
   fi
