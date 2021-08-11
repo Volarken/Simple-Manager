@@ -1,8 +1,8 @@
 #!/bin/bash
 ##Admin Check##
 ##function 1##
-DIR="/etc/SimpleManager"
-adminCheck () {
+DIR="/etc/SimpleManager" #Sets the "DIR" variable to be used later, this variable is defined in case /global.var has not yet been downloaded.
+adminCheck () {	#This function checks to make sure that the script is being run as SUDO
 if [[ "$EUID" -ne 0 ]]; then
  echo -e "This script interacts with folders that only the administrator has access  to.\n please run as root/with the sudo command."
  echo
@@ -11,35 +11,30 @@ if [[ "$EUID" -ne 0 ]]; then
  read -O 'Press enter to continue'
 ##attempt fix##
  clear
- adminCheck
+ sudo bash "$0" #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo)
  else
- firstTimeCheck
+ firstTimeCheck #If EUID is 0, move to the next function. 
 fi
 }
 
 ##function 3##
-firstTimeCheck () {
-if test -d /etc/SimpleManager/	
+firstTimeCheck () {		#This function is used to check if the directory /etc/SimpleManager/ exists, if it does not it will assume first time setup
+if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all files exist, if one does not, download it.
      then
-	 if test ! -f /etc/SimpleManager/global.var ; then
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
+	 if test ! -f /etc/SimpleManager/global.var ; then	#Does global.var exist?
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var #if no, download it.
 	fi
-	if test ! -f /etc/SimpleManager/autoupdate.sh ; then
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	if test ! -f /etc/SimpleManager/autoupdate.sh ; then #Does autoupdate.sh exist?
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh #if no, download it.
 	fi
-	if test ! -f /etc/SimpleManager/send.py ; then
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	if test ! -f /etc/SimpleManager/send.py ; then	
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py 
 	fi
 	if test ! -f /etc/SimpleManager/log ; then
 	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	fi
-	 source /etc/SimpleManager/global.var
-	 cd $DIR
-	 updateCheck
-     echo
-    ##
-    else
-	 if test ! -f /etc/systemd/system/rc-local.service ; then
+##System startup functions## 
+if test ! -f /etc/systemd/system/rc-local.service ; then	#If rc-local.service does not exist, create it.
 	 bash log "RC-LOCAL.SERVICE not detected, will generate now"
 	 sudo /bin/cat <<-EOM >>/etc/systemd/system/rc-local.service
 [Unit]
@@ -58,19 +53,26 @@ if test -d /etc/SimpleManager/
  WantedBy=multi-user.target
 EOM
 fi
-if test ! -f /etc/rc.local ; then
+if test ! -f /etc/rc.local ; then	# If rc.local does not exist, create it.
 	 bash log "/etc/rc.local not detected, will generate now."
 	printf '%s\n' '#!/bin/bash' 'exit 0' | sudo tee -a /etc/rc.local
 	sudo chmod +x /etc/rc.local
 	 fi
-     sudo mkdir /etc/SimpleManager/
-     echo Folder Created
+
+##	
+	 source /etc/SimpleManager/global.var #Source all variables from global.var
+	 cd $DIR	 # CD into /etc/SimpleManager/ for easier accessibility.
+	 updateCheck # Move to next function.
+    ##
+    else
+     sudo mkdir /etc/SimpleManager/	#If folder doesn't exist, create it and download all scripts.
+     echo Folder Created	
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
-	 source /etc/SimpleManager/global.var
-	 cd $DIR
+	 source /etc/SimpleManager/global.var	#Source all variables from global.var
+	 cd $DIR	#CD into /etc/SimpleManager/ for easier accessibility 
 	 updateCheck
       fi
 }
@@ -98,7 +100,7 @@ if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed"
 then
   bash log "Missing python3" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will aquire them now. This may take a while. 
-  read -O 'Press enter to continue.'
+  read -r 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install python3-pip
   python3 -m pip install requests
@@ -120,7 +122,7 @@ if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed
 then
   bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will acquire them now. This may take a while. 
-  read -O 'Press enter to continue.'
+  read -r 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
   sudo apt-get install fail2ban
@@ -198,11 +200,11 @@ do
     fi
 
     # now we can use the selected file
-	if grep -qwF "$filename" /etc/rc.local ; then
+	if ! grep -qwF "$filename" /etc/rc.local ; then
 	LogInput="Adding $filename to startup scripts... "
 	bash log "$LogInput"
 	echo $LogInput
-    sed -i "`wc -l < /etc/rc.local`i\\screen -S $filename -d -m sudo bash /etc/SimpleManager/$filename -\\" /etc/rc.local
+    sed -i "$(wc -l < /etc/rc.local)i\\screen -S $filename -d -m sudo bash /etc/SimpleManager/$filename \\" /etc/rc.local
 	LogInput="Restarting & Enabling RC-Local... "
 	bash log "$LogInput"
 	echo $LogInput
@@ -217,7 +219,7 @@ else
 	systemctl enable rc-local
 	echo "Script $filename should now be online. Check discord for notification."
 fi
-	if grep -qwF "$filename" /etc/rc.local ; then
+	if ! grep -qwF "$filename" /etc/rc.local ; then
 	LogInput="ERROR: Script has not been added to startup."
 	echo $LogInput
 	bash log "$LogInput"
@@ -259,6 +261,7 @@ python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 
 logDump () {
 TIME0=$(date)    
+WEBHOOK_URL=$(cat /etc/SimpleManager/webhook.txt)
 tail -n 99 <$FILE   > logfile.txt
 curl \
   -F 'payload_json={"username": "Botty McBotFace", "content": "@everyone"}' \
@@ -274,7 +277,7 @@ mainMenu () {
 clear
 echo "$(tput setaf 2)"
 echo -e "##############################################################
-#Welcome to the Simple Management System#
+#######Welcome to the Simple Management System################
 ##############################################################
 \n
 1)Dump Log File\n\
@@ -282,7 +285,7 @@ echo -e "##############################################################
 3)View / Restart Scripts\n\
 4)Remove Script from Startup\n\
 5)Setup Discord Notifications(Webhooks)\n\
-5)Exit
+6)Exit
 "
 read -p '>>' -e MenuProcessor
 echo "$(tput sgr0)"
@@ -312,6 +315,9 @@ fi
 if [[ "$MenuProcessor" = "5" ]]; then
 setWebhook
 mainMenu
+fi
+if [[ "$MenuProcessor" = "6" ]]; then
+exit
 fi
 }
 mainMenu
