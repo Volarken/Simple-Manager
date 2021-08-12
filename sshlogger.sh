@@ -14,7 +14,7 @@ SSHLOG1="$(wc -l < /var/log/auth.log)"
 while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the script is constantly looping.
 sleep 10;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
 SSHLOG2="$(wc -l < /var/log/auth.log)"
-  if [[ "$SSHLOG2" > "$SSHLOG1" ]]; then     #This statement says that once TIME0(current time) is equal to 8 PM then run the script.
+  if [[ "$SSHLOG2" > "$SSHLOG1" ]]; then     
   NEWLINES=$((SSHLOG2-SSHLOG1))
   tail -$NEWLINES /var/log/auth.log | grep 'Accepted' >> auth.txt
   fi

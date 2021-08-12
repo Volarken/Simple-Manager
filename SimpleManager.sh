@@ -24,12 +24,6 @@ sed -i "s/#LogLevel INFO/LogLevel VERBOSE/" /etc/ssh/sshd_config
 systemctl restart rsyslog
 fi
 ##OVPN Logging
-if grep -qF ";log-append" /etc/openvpn/server/server.conf ; then	#if OpenVPN is not configured to log, enable it.
-#the assumption here is that the command for the server to log to /var/openvpn/openvpn.log exists but is commented out,
-## this appears to be the default state of openvpn install, if this is not the case errors may occur in the vpnlogger script.
-sed -i "s/;log-append/log-append/" /etc/ssh/sshd_config
-systemctl restart rsyslog
-fi
 ##
 if test ! -f /etc/systemd/system/rc-local.service ; then	#If rc-local.service does not exist, create it.
 	 bash log "RC-LOCAL.SERVICE not detected, will generate now"
@@ -71,6 +65,9 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 	if test ! -f /etc/SimpleManager/sshlogger.sh ; then 
 	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
 	fi
+	if test ! -f /etc/SimpleManager/vpnlogger.sh ; then 
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh
+	fi
 	if test ! -f /etc/SimpleManager/send.py ; then	
 	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py 
 	fi
@@ -85,6 +82,7 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
      echo Folder Created	
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
