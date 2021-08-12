@@ -12,8 +12,6 @@ if [[ "$EUID" -ne 0 ]]; then
 ##attempt fix##
  clear
  sudo bash "$0" #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo)
- else
- firstTimeCheck #If EUID is 0, move to the next function. 
 fi
 }
 
@@ -69,13 +67,10 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 	if test ! -f /etc/SimpleManager/log ; then
 	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
 	fi
-	 enableRCLOCAL
 	 source /etc/SimpleManager/global.var #Source all variables from global.var
 	 cd $DIR	 # CD into /etc/SimpleManager/ for easier accessibility.
-	 updateCheck # Move to next function.
     ##
     else
-	 enableRCLOCAL
      sudo mkdir /etc/SimpleManager/	#If folder doesn't exist, create it and download all scripts.
      echo Folder Created	
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
@@ -85,7 +80,6 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 	 source /etc/SimpleManager/global.var	#Source all variables from global.var
 	 cd $DIR	#CD into /etc/SimpleManager/ for easier accessibility 
-	 updateCheck	#Move to the next function
       fi
 }
 #Checks Github for new version of script#
@@ -93,7 +87,6 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 updateCheck(){
 if [ "$APIVERSION" = "$WEBVERSION" ]; then	# If local APIVERSION does not match WEBVERSION, re-install all scripts.
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
-requiredReposCheck
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
@@ -104,7 +97,6 @@ else
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
 clear
 source global.var
-requiredReposCheck
 fi
 }
 #Installs required repos#
@@ -145,12 +137,20 @@ fi
   
 clear
 }
+##This if statement is so that autoupdate can run this script for daily automatic updates.##
+if [[ "$1" = "updateCheck" ]]; then
+updateCheck
+quit
+fi
 ##You will notice this does not call the main menu function.
 #This is because the full script has not been loaded and therefore mainMenu has not yet been defined.
 #Instead, we will let the script continue to initialize the rest of defined functions.
 ##Start running functions 1-4##
 adminCheck
-##
+requiredReposCheck
+firstTimeCheck #If EUID is 0, move to the next function. 
+enableRCLOCAL #
+updateCheck # Move to next function.
 
 ##main menu function 1##
 webhookWarning() {	#This is a warning that is issued when trying to run script functions that require a webhook.
