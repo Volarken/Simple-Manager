@@ -16,7 +16,7 @@ while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the scrip
 sleep 10;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
 VPNLOG2="$(wc -l < /var/log/syslog)"
   if [[ "$VPNLOG2" > "$VPNLOG1" ]]; then    
-  NEWLINES=$((VPN2-VPNLOG1))
+  NEWLINES=$((VPNLOG2-VPNLOG1))
   tail -$NEWLINES /var/log/syslog | grep 'MULTI_sva: pool returned' >> cons.txt
   tail -$NEWLINES /var/log/syslog | grep 'MULTI_sva: pool returned' >> connection-history.log
   fi
