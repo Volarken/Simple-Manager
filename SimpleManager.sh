@@ -8,7 +8,7 @@ if [[ "$EUID" -ne 0 ]]; then
  echo
  echo -e "We will attempt to do this for you."
  echo
- read -O 'Press enter to continue'
+ read -p 'Press enter to continue'
 ##attempt fix##
  clear
  sudo bash "$0" #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo)
@@ -17,10 +17,20 @@ fi
 
 ##function 2##
 enableRCLOCAL() {
+##non RC-Local related logging configurations
+##SSHD Logging
 if grep -qF "LogLevel INFO" /etc/ssh/sshd_config ; then	#if SSHD is not configured to log, enable it.
 sed -i "s/#LogLevel INFO/LogLevel VERBOSE/" /etc/ssh/sshd_config
 systemctl restart rsyslog
 fi
+##OVPN Logging
+if grep -qF ";log-append" /etc/openvpn/server/server.conf ; then	#if OpenVPN is not configured to log, enable it.
+#the assumption here is that the command for the server to log to /var/openvpn/openvpn.log exists but is commented out,
+## this appears to be the default state of openvpn install, if this is not the case errors may occur in the vpnlogger script.
+sed -i "s/;log-append/log-append/" /etc/ssh/sshd_config
+systemctl restart rsyslog
+fi
+##
 if test ! -f /etc/systemd/system/rc-local.service ; then	#If rc-local.service does not exist, create it.
 	 bash log "RC-LOCAL.SERVICE not detected, will generate now"
 	 sudo /bin/cat <<-EOM >>/etc/systemd/system/rc-local.service
@@ -106,7 +116,7 @@ if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed"
 then #To speed things up and patch possible errors, each repo check will attempt to download all of the required repos.
   bash log "Missing python3" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will aquire them now. This may take a while. 
-  read -r 'Press enter to continue.'
+  read -p 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install python3-pip #right now, pip will only install if python3 is not installed.
   python3 -m pip install requests
@@ -118,7 +128,7 @@ if [ $(dpkg-query -W -f='${Status}' screen 2>/dev/null | grep -c "ok installed")
 then
   bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will acquire them now. This may take a while. 
-  read -O 'Press enter to continue.'
+  read -p 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
   sudo apt-get install fail2ban
@@ -128,7 +138,7 @@ if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed
 then
   bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will acquire them now. This may take a while. 
-  read -r 'Press enter to continue.'
+  read -p 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
   sudo apt-get install fail2ban
