@@ -57,22 +57,22 @@ firstTimeCheck () {		#This function is used to check if the directory /etc/Simpl
 if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all files exist, if one does not, download it.
      then
 	 if test ! -f /etc/SimpleManager/global.var ; then	#Does global.var exist?
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var #if no, download it.
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var > /dev/null #if no, download it.
 	fi
 	if test ! -f /etc/SimpleManager/autoupdate.sh ; then #Does autoupdate.sh exist?
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh #if no, download it.
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh > /dev/null #if no, download it.
 	fi
 	if test ! -f /etc/SimpleManager/sshlogger.sh ; then 
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh > /dev/null
 	fi
 	if test ! -f /etc/SimpleManager/vpnlogger.sh ; then 
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh > /dev/null
 	fi
 	if test ! -f /etc/SimpleManager/send.py ; then	
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py 
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py > /dev/null
 	fi
 	if test ! -f /etc/SimpleManager/log ; then
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log > /dev/null
 	fi
 	 source /etc/SimpleManager/global.var #Source all variables from global.var
 	 cd $DIR	 # CD into /etc/SimpleManager/ for easier accessibility.
@@ -80,12 +80,12 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
     else
      sudo mkdir /etc/SimpleManager/	#If folder doesn't exist, create it and download all scripts.
      echo Folder Created	
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py > /dev/null
 	 source /etc/SimpleManager/global.var	#Source all variables from global.var
 	 cd $DIR	#CD into /etc/SimpleManager/ for easier accessibility 
       fi
@@ -97,12 +97,12 @@ if [ "$APIVERSION" = "$WEBVERSION" ]; then	# If local APIVERSION does not match 
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -o "$0" > /dev/null > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py > /dev/null
 clear
 source global.var
 fi
