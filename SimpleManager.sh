@@ -114,7 +114,7 @@ if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed"
 then #To speed things up and patch possible errors, each repo check will attempt to download all of the required repos.
   bash log "Missing python3" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will aquire them now. This may take a while. 
-  read -r 'Press enter to continue.'
+  read -p 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install python3-pip #right now, pip will only install if python3 is not installed.
   python3 -m pip install requests
@@ -126,7 +126,7 @@ if [ $(dpkg-query -W -f='${Status}' screen 2>/dev/null | grep -c "ok installed")
 then
   bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will acquire them now. This may take a while. 
-  read -O 'Press enter to continue.'
+  read -p 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
   sudo apt-get install fail2ban
@@ -136,7 +136,7 @@ if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed
 then
   bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will acquire them now. This may take a while. 
-  read -r 'Press enter to continue.'
+  read -p 'Press enter to continue.'
   sudo apt-get install python3
   sudo apt-get install screen
   sudo apt-get install fail2ban
