@@ -97,7 +97,7 @@ if [ "$APIVERSION" = "$WEBVERSION" ]; then	# If local APIVERSION does not match 
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -o "$0" > /dev/null > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -o "$0" > /dev/null
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh > /dev/null
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh > /dev/null
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log > /dev/null
@@ -150,10 +150,11 @@ clear
 #Instead, we will let the script continue to initialize the rest of defined functions.
 ##Start running functions 1-4##
 adminCheck
+updateCheck # Move to next function.
 requiredReposCheck
 firstTimeCheck #If EUID is 0, move to the next function. 
 enableRCLOCAL #
-updateCheck # Move to next function.
+
 
 ##main menu function 1##
 webhookWarning() {	#This is a warning that is issued when trying to run script functions that require a webhook.
