@@ -137,11 +137,6 @@ fi
   
 clear
 }
-##This if statement is so that autoupdate can run this script for daily automatic updates.##
-if [[ "$1" = "updateCheck" ]]; then
-updateCheck
-quit
-fi
 ##You will notice this does not call the main menu function.
 #This is because the full script has not been loaded and therefore mainMenu has not yet been defined.
 #Instead, we will let the script continue to initialize the rest of defined functions.
