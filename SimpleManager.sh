@@ -294,6 +294,10 @@ curl \
 
 mainMenu () {
 ##MAIN MENU##
+#my script hates me and continues to download a copy of SimpleManager to /etc/SimpleManager, this makes sure its deleted. 
+if test -f /etc/SimpleManager/SimpleManager.sh ; then
+rm -Rf /etc/SimpleManager/SimpleManager.sh
+fi
 clear
 echo "$(tput setaf 2)"
 echo -e "##############################################################
