@@ -226,11 +226,11 @@ do
     # now we can use the selected file
 	if ! grep -qwF "$filename" /etc/rc.local ; then	#If the selected file is NOT referenced in rc.local, add it to startup 
 	LogInput="Adding $filename to startup scripts... "
-	bash log "$LogInput"
+	bash log "$LogInput" || exit
 	echo $LogInput
     sed -i "$(wc -l < /etc/rc.local)i\\screen -S $filename -d -m sudo bash /etc/SimpleManager/$filename \\" /etc/rc.local
 	LogInput="Restarting & Enabling RC-Local... "
-	bash log "$LogInput"
+	bash log "$LogInput" || exit
 	echo $LogInput
 	systemctl restart rc-local
 	systemctl enable rc-local
@@ -238,7 +238,7 @@ do
   echo "Use number to select a file or 'stop' to return to main menu: "
 else #If the selected file is referenced in rc.local, simply restart & enable rc-local
 	LogInput="Restarting & Enabling RC-Local... "
-	bash log "$LogInput"
+	bash log "$LogInput" || exit
 	echo $LogInput
     systemctl restart rc-local
 	systemctl enable rc-local
@@ -247,13 +247,13 @@ fi	#If the file is not in rc.local after attempting to add it, issue an error to
 	if ! grep -qwF "$filename" /etc/rc.local ; then
 	LogInput="ERROR: Script has not been added to startup."
 	echo $LogInput
-	bash log "$LogInput"
+	bash log "$LogInput" || exit
 	python3 send.py "$whRED" "$LogInput" "$TIME0"
 	fi
 done
 #when the loop closes, send a discord notification to tell the user that setup has been completed.
 LogInput="Warning: All scripts should now be online..."
-sudo bash log "$LogInput"
+sudo bash log "$LogInput" || exit
 sleep 1;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 mainMenu
@@ -269,17 +269,18 @@ echo "Y/N"
       if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
 	  LogInput="WARNING: ALL SCRIPTS ARE RESTARTING, WATCH DISCORD NOTIFCATIONS FOR VERIFICATION OF SUCCESSFUL STARTUP FOR EACH SCRIPT..."
 	  sleep 5;
-	sudo bash log "$LogInput"
+	sudo bash log "$LogInput" || exit
 	sleep 1;
 	python3 send.py "$whBLUE" "$LogInput" "$TIME0"
     systemctl restart rc-local
      else
 	 echo "Returning to main menu..."
+	 mainMenu
 	 fi
 sleep 10;
 #when finished, send a discord notification to tell the user that restart has completed.
 LogInput="Warning: All scripts should now be online..."
-sudo bash log "$LogInput"
+sudo bash log "$LogInput" || exit
 sleep 2;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
@@ -305,6 +306,80 @@ curl \
  fi
   mainMenu
 }
+##Main Menu Function 6##
+removeScripts () {
+echo -e "These are the current scripts specified to run at startup.... \n"
+grep -wF "screen" /etc/rc.local
+echo -e "\n"
+echo -e "Would you like to remove a script?"
+echo "Y\N"
+read -p '>>' -e quickChoice
+      while [[ "$quickChoice" = "y" || "$quickChoice" = "Y" ]] ; do
+	  echo "Type the script name to remove or 'stop' to return to main menu: "
+	  echo "What is the name of the script you would like to remove?"
+	  read -p '>>' -e REM
+	  SHCHECK=$(printf "$REM" | tail -c 2)
+	  
+	  if [[ "$REM" = "stop" ]]; then
+	  mainMenu
+	  fi
+	  if [[ "$REM" = "" ]]; then
+	  echo "Choice is not valid, try again."
+	  
+	  else
+	  
+	  if ! grep -qwF "$REM" /etc/rc.local ; then
+	  echo "Specified name does not appear in RC.LOCAL. Try again."
+	  
+	  else
+	  
+	  if [[ ! "$SHCHECK" = "sh" ]]; then
+	  echo "To remove a script you must include the full name plus extension (example autoupdate.sh)"
+	  echo "Please try again..."
+	  
+	  else
+	  
+	  if grep -qwF "$REM" /etc/rc.local ; then
+	  
+	  if grep -qwF "$REM" /etc/rc.local ; then
+	  echo "Are you sure you would like to remove $REM ?"
+	  read -p '>>' -e YN
+	  
+	  if [[ "$YN" = "Y" || "$YN" = "y" ]]; then
+	  grep -v "$REM" /etc/rc.local > tmpfile
+	  echo "New startup configuration..."
+	  grep -wF "screen" tmpfile
+	  echo "Would you like to save these changes?"
+	  read -p '>>' -e YN
+	  
+	  if [[ "$YN" = "Y" || "$YN" = "y" ]]; then 
+	  LogInput="WARNING: $REM has been removed from active scripts!"
+	  sudo bash log "$LogInput" || exit
+	  sleep 2;
+	  python3 send.py "$whRED" "$LogInput" "$TIME0"
+	  mv tmpfile /etc/rc.local
+	  sudo chmod +x /etc/rc.local
+	  else
+	  
+	  echo "Discarding changes..."
+	  fi
+	  fi
+	  fi
+	  fi
+	  fi
+	  fi
+	  fi
+	  done
+	  
+	  
+	
+
+
+
+
+
+}
+##
 
 mainMenu () {
 ##MAIN MENU##
@@ -346,11 +421,7 @@ restartScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "4" ]]; then
-echo "WARNING: Not yet programmed, im getting to it though :)"
-echo "Press enter to return to mainMenu"
-read -e ''
-#webhookWarning
-#removeScripts
+removeScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "5" ]]; then
