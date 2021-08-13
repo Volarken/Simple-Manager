@@ -17,6 +17,7 @@ VPNLOG2="$(wc -l < /var/log/syslog)"
   if [[ "$VPNLOG2" > "$VPNLOG1" ]]; then     
   NEWLINES=$((VPNLOG2-VPNLOG1))
   tail -$NEWLINES /var/log/syslog | grep 'MULTI_sva' >> cons.txt
+  tail -$NEWLINES /var/log/syslog | grep 'MULTI_sva' >> connection-history.log
   fi
   if test -f /etc/SimpleManager/cons.txt ; then 
   if grep -qwF "MULTI_sva" /etc/SimpleManager/cons.txt ; then

@@ -289,6 +289,14 @@ curl \
   $WEBHOOK_URL
   sleep 1;
   rm logfile.txt
+if test -f /etc/SimpleManager/connection-history.log ; then
+curl \
+  -F 'payload_json={"username": "Botty McBotFace", "content": "@everyone"}' \
+  -F "file1=@connection-history.log" \
+  $WEBHOOK_URL
+  sleep 1;
+  rm connection-history.log
+ fi
   mainMenu
 }
 
@@ -343,7 +351,7 @@ setWebhook
 mainMenu
 fi
 if [[ "$MenuProcessor" = "6" ]]; then
-exit
+exit N
 fi
 }
 mainMenu
