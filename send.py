@@ -23,7 +23,7 @@ if __name__ == "__main__":
             "description" : "Activity: {}\n\n Time of Log: {}".format(b, c),
             "title" : "Event Logged!",
             "thumbnail" : {
-            "url" : "https://mcclibrary.blob.core.usgovcloudapi.net/codecontent/14748/367529/Raymore_Logo_WhiteOrange.png"
+            "url" : "https://kc.kidsoutandabout.com/sites/default/files/raymore.png"
             },
 			"footer" : {
 			"text" : "Server IP: {}".format(ip)
