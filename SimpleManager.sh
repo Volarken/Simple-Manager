@@ -12,6 +12,8 @@ if [[ "$EUID" -ne 0 ]]; then
 ##attempt fix##
  clear
  sudo bash "$0" #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo)
+ else
+ firstTimeCheck
 fi
 }
 
@@ -49,6 +51,7 @@ if test ! -f /etc/rc.local ; then	# If rc.local does not exist, create it.
 	printf '%s\n' '#!/bin/bash' 'exit 0' | sudo tee -a /etc/rc.local
 	sudo chmod +x /etc/rc.local
 	 fi
+	 requiredReposCheck
 }
 ##	
 
@@ -76,6 +79,7 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 	fi
 	 source /etc/SimpleManager/global.var #Source all variables from global.var
 	 cd $DIR	 # CD into /etc/SimpleManager/ for easier accessibility.
+	 updateCheck
     ##
     else
      sudo mkdir /etc/SimpleManager/	#If folder doesn't exist, create it and download all scripts.
@@ -88,6 +92,7 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py > /dev/null
 	 source /etc/SimpleManager/global.var	#Source all variables from global.var
 	 cd $DIR	#CD into /etc/SimpleManager/ for easier accessibility 
+	 updateCheck
       fi
 }
 #Checks Github for new version of script#
@@ -95,6 +100,7 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 updateCheck(){
 if [ "$APIVERSION" = "$WEBVERSION" ]; then	# If local APIVERSION does not match WEBVERSION, re-install all scripts.
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
+
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -o "$0" > /dev/null
@@ -105,6 +111,7 @@ else
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py > /dev/null
 clear
 source global.var
+enableRCLOCAL
 fi
 }
 #Installs required repos#
@@ -150,10 +157,7 @@ clear
 #Instead, we will let the script continue to initialize the rest of defined functions.
 ##Start running functions 1-4##
 adminCheck
-updateCheck # Move to next function.
-requiredReposCheck
-firstTimeCheck #If EUID is 0, move to the next function. 
-enableRCLOCAL #
+
 
 
 ##main menu function 1##

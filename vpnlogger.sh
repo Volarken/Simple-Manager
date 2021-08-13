@@ -22,7 +22,7 @@ VPNLOG2="$(wc -l < /var/log/syslog)"
   if test -f /etc/SimpleManager/cons.txt ; then 
   if grep -qwF "MULTI_sva" /etc/SimpleManager/cons.txt ; then
   NEWCONNECTION=$(cat /etc/SimpleManager/cons.txt)
-  LogInput="New connection on server! -Details- $NEWCONNECTION "
+  LogInput="New VPN connection on server! -Details- $NEWCONNECTION "
   sudo bash log "$LogInput"
   python3 send.py "$whBLUE" "$LogInput" "$TIME0"
   fi
