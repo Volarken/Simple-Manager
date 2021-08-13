@@ -12,6 +12,7 @@ if [[ "$EUID" -ne 0 ]]; then
 ##attempt fix##
  clear
  sudo bash "$0" #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo)
+ exit -1
  else
  firstTimeCheck
 fi
@@ -267,6 +268,7 @@ echo "Y/N"
  read -p '>>' -e quickChoice
       if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
 	  LogInput="WARNING: ALL SCRIPTS ARE RESTARTING, WATCH DISCORD NOTIFCATIONS FOR VERIFICATION OF SUCCESSFUL STARTUP FOR EACH SCRIPT..."
+	  sleep 5;
 	sudo bash log "$LogInput"
 	sleep 1;
 	python3 send.py "$whBLUE" "$LogInput" "$TIME0"
@@ -274,7 +276,7 @@ echo "Y/N"
      else
 	 echo "Returning to main menu..."
 	 fi
-
+sleep 10;
 #when finished, send a discord notification to tell the user that restart has completed.
 LogInput="Warning: All scripts should now be online..."
 sudo bash log "$LogInput"
@@ -309,6 +311,7 @@ mainMenu () {
 #my script hates me and continues to download a copy of SimpleManager to /etc/SimpleManager, this makes sure its deleted. 
 if test -f /etc/SimpleManager/SimpleManager.sh ; then
 rm -Rf /etc/SimpleManager/SimpleManager.sh
+rm -Rf /etc/SimpleManager/SimpleManager.sh.1
 fi
 clear
 echo "$(tput setaf 2)"
@@ -355,7 +358,7 @@ setWebhook
 mainMenu
 fi
 if [[ "$MenuProcessor" = "6" ]]; then
-exit N
+exit -1
 fi
 }
 mainMenu
