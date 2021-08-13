@@ -11,7 +11,7 @@ if [[ "$EUID" -ne 0 ]]; then
  read -p 'Press enter to continue'
 ##attempt fix##
  clear
- sudo bash "$0" #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo)
+ sudo bash "$0" || exit #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo) 
  exit -1
  else
  firstTimeCheck
