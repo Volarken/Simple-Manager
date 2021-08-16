@@ -8,21 +8,26 @@ if [[ "$EUID" -ne 0 ]]; then
  echo
  echo -e "We will attempt to do this for you."
  echo
- read -O 'Press enter to continue'
+ read -p 'Press enter to continue'
 ##attempt fix##
  clear
- sudo bash "$0" #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo)
+ sudo bash "$0" || exit #If EUID does not equal user 0 (root) then re-run as sudo (this creates a loop until script has been ran with proper sudo) 
+ exit -1
  else
- firstTimeCheck #If EUID is 0, move to the next function. 
+ firstTimeCheck
 fi
 }
 
 ##function 2##
 enableRCLOCAL() {
+##non RC-Local related logging configurations
+##SSHD Logging
 if grep -qF "LogLevel INFO" /etc/ssh/sshd_config ; then	#if SSHD is not configured to log, enable it.
 sed -i "s/#LogLevel INFO/LogLevel VERBOSE/" /etc/ssh/sshd_config
 systemctl restart rsyslog
 fi
+##OVPN Logging
+##
 if test ! -f /etc/systemd/system/rc-local.service ; then	#If rc-local.service does not exist, create it.
 	 bash log "RC-LOCAL.SERVICE not detected, will generate now"
 	 sudo /bin/cat <<-EOM >>/etc/systemd/system/rc-local.service
@@ -47,6 +52,7 @@ if test ! -f /etc/rc.local ; then	# If rc.local does not exist, create it.
 	printf '%s\n' '#!/bin/bash' 'exit 0' | sudo tee -a /etc/rc.local
 	sudo chmod +x /etc/rc.local
 	 fi
+	 requiredReposCheck
 }
 ##	
 
@@ -55,37 +61,39 @@ firstTimeCheck () {		#This function is used to check if the directory /etc/Simpl
 if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all files exist, if one does not, download it.
      then
 	 if test ! -f /etc/SimpleManager/global.var ; then	#Does global.var exist?
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var #if no, download it.
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var > /dev/null #if no, download it.
 	fi
 	if test ! -f /etc/SimpleManager/autoupdate.sh ; then #Does autoupdate.sh exist?
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh #if no, download it.
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh > /dev/null #if no, download it.
 	fi
 	if test ! -f /etc/SimpleManager/sshlogger.sh ; then 
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh > /dev/null
+	fi
+	if test ! -f /etc/SimpleManager/vpnlogger.sh ; then 
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh > /dev/null
 	fi
 	if test ! -f /etc/SimpleManager/send.py ; then	
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py 
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py > /dev/null
 	fi
 	if test ! -f /etc/SimpleManager/log ; then
-	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
+	sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log > /dev/null
 	fi
-	 enableRCLOCAL
 	 source /etc/SimpleManager/global.var #Source all variables from global.var
 	 cd $DIR	 # CD into /etc/SimpleManager/ for easier accessibility.
-	 updateCheck # Move to next function.
+	 updateCheck
     ##
     else
-	 enableRCLOCAL
      sudo mkdir /etc/SimpleManager/	#If folder doesn't exist, create it and download all scripts.
      echo Folder Created	
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py > /dev/null
 	 source /etc/SimpleManager/global.var	#Source all variables from global.var
 	 cd $DIR	#CD into /etc/SimpleManager/ for easier accessibility 
-	 updateCheck	#Move to the next function
+	 updateCheck
       fi
 }
 #Checks Github for new version of script#
@@ -93,18 +101,18 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 updateCheck(){
 if [ "$APIVERSION" = "$WEBVERSION" ]; then	# If local APIVERSION does not match WEBVERSION, re-install all scripts.
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
-requiredReposCheck
+
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -O $0
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/SimpleManager.sh -o "$0" > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var > /dev/null
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py > /dev/null
 clear
 source global.var
-requiredReposCheck
+enableRCLOCAL
 fi
 }
 #Installs required repos#
@@ -150,7 +158,8 @@ clear
 #Instead, we will let the script continue to initialize the rest of defined functions.
 ##Start running functions 1-4##
 adminCheck
-##
+
+
 
 ##main menu function 1##
 webhookWarning() {	#This is a warning that is issued when trying to run script functions that require a webhook.
@@ -217,11 +226,11 @@ do
     # now we can use the selected file
 	if ! grep -qwF "$filename" /etc/rc.local ; then	#If the selected file is NOT referenced in rc.local, add it to startup 
 	LogInput="Adding $filename to startup scripts... "
-	bash log "$LogInput"
+	bash log "$LogInput" || exit
 	echo $LogInput
     sed -i "$(wc -l < /etc/rc.local)i\\screen -S $filename -d -m sudo bash /etc/SimpleManager/$filename \\" /etc/rc.local
 	LogInput="Restarting & Enabling RC-Local... "
-	bash log "$LogInput"
+	bash log "$LogInput" || exit
 	echo $LogInput
 	systemctl restart rc-local
 	systemctl enable rc-local
@@ -229,7 +238,7 @@ do
   echo "Use number to select a file or 'stop' to return to main menu: "
 else #If the selected file is referenced in rc.local, simply restart & enable rc-local
 	LogInput="Restarting & Enabling RC-Local... "
-	bash log "$LogInput"
+	bash log "$LogInput" || exit
 	echo $LogInput
     systemctl restart rc-local
 	systemctl enable rc-local
@@ -238,13 +247,13 @@ fi	#If the file is not in rc.local after attempting to add it, issue an error to
 	if ! grep -qwF "$filename" /etc/rc.local ; then
 	LogInput="ERROR: Script has not been added to startup."
 	echo $LogInput
-	bash log "$LogInput"
+	bash log "$LogInput" || exit
 	python3 send.py "$whRED" "$LogInput" "$TIME0"
 	fi
 done
 #when the loop closes, send a discord notification to tell the user that setup has been completed.
 LogInput="Warning: All scripts should now be online..."
-sudo bash log "$LogInput"
+sudo bash log "$LogInput" || exit
 sleep 1;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 mainMenu
@@ -259,17 +268,19 @@ echo "Y/N"
  read -p '>>' -e quickChoice
       if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then
 	  LogInput="WARNING: ALL SCRIPTS ARE RESTARTING, WATCH DISCORD NOTIFCATIONS FOR VERIFICATION OF SUCCESSFUL STARTUP FOR EACH SCRIPT..."
-	sudo bash log "$LogInput"
+	  sleep 5;
+	sudo bash log "$LogInput" || exit
 	sleep 1;
 	python3 send.py "$whBLUE" "$LogInput" "$TIME0"
     systemctl restart rc-local
      else
 	 echo "Returning to main menu..."
+	 mainMenu
 	 fi
-
+sleep 10;
 #when finished, send a discord notification to tell the user that restart has completed.
 LogInput="Warning: All scripts should now be online..."
-sudo bash log "$LogInput"
+sudo bash log "$LogInput" || exit
 sleep 2;
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
@@ -285,11 +296,98 @@ curl \
   $WEBHOOK_URL
   sleep 1;
   rm logfile.txt
+if test -f /etc/SimpleManager/connection-history.log ; then
+curl \
+  -F 'payload_json={"username": "Botty McBotFace", "content": "@everyone"}' \
+  -F "file1=@connection-history.log" \
+  $WEBHOOK_URL
+  sleep 1;
+  rm connection-history.log
+ fi
   mainMenu
 }
+##Main Menu Function 6##
+removeScripts () {
+echo -e "These are the current scripts specified to run at startup.... \n"
+grep -wF "screen" /etc/rc.local
+echo -e "\n"
+echo -e "Would you like to remove a script?"
+echo "Y\N"
+read -p '>>' -e quickChoice
+      while [[ "$quickChoice" = "y" || "$quickChoice" = "Y" ]] ; do
+	  echo "Type the script name to remove or 'stop' to return to main menu: "
+	  echo "What is the name of the script you would like to remove?"
+	  read -p '>>' -e REM
+	  SHCHECK=$(printf "$REM" | tail -c 2)
+	  
+	  if [[ "$REM" = "stop" ]]; then
+	  mainMenu
+	  fi
+	  if [[ "$REM" = "" ]]; then
+	  echo "Choice is not valid, try again."
+	  
+	  else
+	  
+	  if ! grep -qwF "$REM" /etc/rc.local ; then
+	  echo "Specified name does not appear in RC.LOCAL. Try again."
+	  
+	  else
+	  
+	  if [[ ! "$SHCHECK" = "sh" ]]; then
+	  echo "To remove a script you must include the full name plus extension (example autoupdate.sh)"
+	  echo "Please try again..."
+	  
+	  else
+	  
+	  if grep -qwF "$REM" /etc/rc.local ; then
+	  
+	  if grep -qwF "$REM" /etc/rc.local ; then
+	  echo "Are you sure you would like to remove $REM ?"
+	  read -p '>>' -e YN
+	  
+	  if [[ "$YN" = "Y" || "$YN" = "y" ]]; then
+	  grep -v "$REM" /etc/rc.local > tmpfile
+	  echo "New startup configuration..."
+	  grep -wF "screen" tmpfile
+	  echo "Would you like to save these changes?"
+	  read -p '>>' -e YN
+	  
+	  if [[ "$YN" = "Y" || "$YN" = "y" ]]; then 
+	  LogInput="WARNING: $REM has been removed from active scripts!"
+	  sudo bash log "$LogInput" || exit
+	  sleep 2;
+	  python3 send.py "$whRED" "$LogInput" "$TIME0"
+	  mv tmpfile /etc/rc.local
+	  sudo chmod +x /etc/rc.local
+	  else
+	  
+	  echo "Discarding changes..."
+	  fi
+	  fi
+	  fi
+	  fi
+	  fi
+	  fi
+	  fi
+	  done
+	  
+	  
+	
+
+
+
+
+
+}
+##
 
 mainMenu () {
 ##MAIN MENU##
+#my script hates me and continues to download a copy of SimpleManager to /etc/SimpleManager, this makes sure its deleted. 
+if test -f /etc/SimpleManager/SimpleManager.sh ; then
+rm -Rf /etc/SimpleManager/SimpleManager.sh
+rm -Rf /etc/SimpleManager/SimpleManager.sh.1
+fi
 clear
 echo "$(tput setaf 2)"
 echo -e "##############################################################
@@ -323,11 +421,7 @@ restartScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "4" ]]; then
-echo "WARNING: Not yet programmed, im getting to it though :)"
-echo "Press enter to return to mainMenu"
-read -e ''
-#webhookWarning
-#removeScripts
+removeScripts
 mainMenu
 fi
 if [[ "$MenuProcessor" = "5" ]]; then
@@ -335,7 +429,7 @@ setWebhook
 mainMenu
 fi
 if [[ "$MenuProcessor" = "6" ]]; then
-exit
+exit -1
 fi
 }
 mainMenu
