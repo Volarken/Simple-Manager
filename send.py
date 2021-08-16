@@ -11,8 +11,8 @@ if __name__ == "__main__":
     
 #for all params, see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
     data = {
-        "content" : "@everyone",
-        "username" : "Botty McBotFace"
+        "content" : "@everyone"
+   #     "username" : "Botty McBotFace"
     }
 
 #leave this out if you dont want an embed
