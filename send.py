@@ -22,9 +22,9 @@ if __name__ == "__main__":
             "color" : "{}".format(a),
             "description" : "Activity: {}\n\n Time of Log: {}".format(b, c),
             "title" : "Event Logged!",
-            "thumbnail" : {
-            "url" : "https://kc.kidsoutandabout.com/sites/default/files/raymore.png"
-            },
+ #           "thumbnail" : {
+ #           "url" : ""
+ #           },
 			"footer" : {
 			"text" : "Server IP: {}".format(ip)
 			}
