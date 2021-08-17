@@ -44,6 +44,10 @@ sleep 60;
 fi
   ##
   fi
+  if [[ "$DAYS" -lt "0" ]]; then
+  rm d.txt
+  sudo bash log "AutoUpdate error: DAYS is less than zero-attempting to delete variable file."
+  fi
   if [[ "$DAYS" = "7" ]]; then
   LogInput="WARNING, server will restart in 10 seconds... Message(s) should send when the server has successfully rebooted..."
   sudo bash log "$LogInput"
@@ -52,8 +56,7 @@ fi
   sudo reboot
   fi
   if [[ "$DAYS" = "14" ]]; then
-  echo "0" > d.txt
-  echo "$DAYS" > $DIR/d.txt  
+  echo "0" > d.txt 
   if ! { sudo apt-get update 2>&1 || echo E: update failed; } | grep -q '^[WE]:'; then #run update and check for errors
 		LogInput="SERVER UPDATE SUCCESSFUL."
 		  sudo bash log "$LogInput"
