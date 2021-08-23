@@ -32,7 +32,7 @@ sleep 55;                     #This puts a delay on how fast the script can run,
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $DIR/autoupdate.sh
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O $0
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
