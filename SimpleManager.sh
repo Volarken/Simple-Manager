@@ -158,6 +158,9 @@ clear
 #Instead, we will let the script continue to initialize the rest of defined functions.
 ##Start running functions 1-4##
 adminCheck
+enableRCLOCAL
+requiredReposCheck
+firstTimeCheck
 
 
 
