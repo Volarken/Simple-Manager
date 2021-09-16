@@ -32,12 +32,12 @@ sleep 55;                     #This puts a delay on how fast the script can run,
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -o $0
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O $DIR/sshlogger.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O $DIR/vpnlogger.sh
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O $DIR/log
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O $DIR/global.var
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O $DIR/send.py
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -o "$0"
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O "$DIR/sshlogger.sh"
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O "$DIR/vpnlogger.sh"
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O "$DIR/log"
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O "$DIR/global.var"
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O "$DIR/send.py"
 clear
 source global.var
 sleep 60;
