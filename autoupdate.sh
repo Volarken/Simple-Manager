@@ -13,7 +13,7 @@ sudo bash log "$LogInput"
 python3 send.py "$whGREEN" "$LogInput" "$TIME0"
 while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the script is constantly looping.
 TIME1=$(date +%H:%M)          #This stores the current time inside of a variable called TIME1
-sleep 55;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
+sleep 60;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
   if [[ "$TIME1" = "06:00" ]]; then     #This statement says that once TIME0(current time) is equal to 8 PM then run the script.
   DAYS=$(cat d.txt)
   DAYS=$DAYS+1
@@ -39,8 +39,8 @@ else
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/global.var -O "$DIR/global.var"
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/send.py -O "$DIR/send.py"
 clear
-source global.var
 sleep 60;
+source global.var
 fi
   ##
   fi
