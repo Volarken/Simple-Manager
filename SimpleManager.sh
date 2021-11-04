@@ -389,7 +389,7 @@ mainMenu () {
 #my script hates me and continues to download a copy of SimpleManager to /etc/SimpleManager, this makes sure its deleted. 
 if test -f /etc/SimpleManager/SimpleManager.sh ; then
 rm -Rf /etc/SimpleManager/SimpleManager.sh
-rm -Rf /etc/SimpleManager/SimpleManager.sh.1
+rm -Rf /etc/SimpleManager/*.sh.1
 fi
 clear
 echo "$(tput setaf 2)"
