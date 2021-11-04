@@ -1,7 +1,7 @@
 #!/bin/bash
 #Global Variables##
 source /etc/SimpleManager/global.var
-WEBHOOK_URL=$(cat $DIR/webhook.txt)
+WEBHOOK_URL=$(cat $DIR/webhook.var)
 TIME0=$(date)    
 sudo /bin/cat <<-EOM >>$FILE
     Activity logged on $TIME0
