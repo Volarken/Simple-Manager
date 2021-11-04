@@ -2,11 +2,15 @@
 #Global Variables##
 cd /etc/SimpleManager/
 source global.var
-
+if test -f /etc/SimpleManager/SimpleManager.sh ; then
+rm -Rf /etc/SimpleManager/SimpleManager.sh
+rm -Rf /etc/SimpleManager/*.sh.1
 
 
 ##Child Script Variables##
 declare -i DAYS
+declare -i DTR
+declare -i DTU
 ##
 LogInput="AutoUpdate/Restart script is now online."
 sudo bash log "$LogInput"
@@ -32,7 +36,7 @@ sleep 60;                     #This puts a delay on how fast the script can run,
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
 else
 	 bash log "Script outdated, current version is $APIVERSION, updating to $WEBVERSION now."
-	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -o "$0"
+	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/autoupdate.sh -O "$0"
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/sshlogger.sh -O "$DIR/sshlogger.sh"
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/vpnlogger.sh -O "$DIR/vpnlogger.sh"
 	 sudo wget https://raw.githubusercontent.com/Volarken/Simple-Manager/main/log -O "$DIR/log"
@@ -45,8 +49,12 @@ fi
   ##
   fi
   if [[ "$DAYS" -lt "0" ]]; then
-  rm d.txt
+  sudo rm -Rf d.txt
   sudo bash log "AutoUpdate error: DAYS is less than zero-attempting to delete variable file."
+  fi
+  if [[ "$DAYS" -gt "14" ]]; then
+  sudo rm -Rf d.txt
+  sudo bash log "AutoUpdate error: DAYS is more than 14-attempting to delete variable file."
   fi
   if [[ "$DAYS" = "7" ]]; then
   LogInput="WARNING, server will restart in 10 seconds... Message(s) should send when the server has successfully rebooted..."
@@ -56,7 +64,7 @@ fi
   sudo reboot
   fi
   if [[ "$DAYS" = "14" ]]; then
-  echo "0" > d.txt 
+  sudo rm -Rf *.txt
   if ! { sudo apt-get update 2>&1 || echo E: update failed; } | grep -q '^[WE]:'; then #run update and check for errors
 		LogInput="SERVER UPDATE SUCCESSFUL."
 		  sudo bash log "$LogInput"

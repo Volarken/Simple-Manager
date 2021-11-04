@@ -12,7 +12,7 @@ sudo bash log "$LogInput"
 python3 send.py "$whGREEN" "$LogInput" "$TIME0"
 SSHLOG1="$(wc -l < /var/log/auth.log)"
 while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the script is constantly looping.
-sleep 10;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
+sleep 20;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
 SSHLOG2="$(wc -l < /var/log/auth.log)"
   if [[ "$SSHLOG2" > "$SSHLOG1" ]]; then     
   NEWLINES=$((SSHLOG2-SSHLOG1))
@@ -25,7 +25,7 @@ SSHLOG2="$(wc -l < /var/log/auth.log)"
   sudo bash log "$LogInput"
   python3 send.py "$whBLUE" "$LogInput" "$TIME0"
   fi
-  rm /etc/SimpleManager/auth.txt
+  sudo rm -Rf /etc/SimpleManager/auth.txt
   fi
   SSHLOG1="$(wc -l < /var/log/auth.log)"
 done

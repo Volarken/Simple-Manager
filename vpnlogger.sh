@@ -12,7 +12,7 @@ sudo bash log "$LogInput"
 python3 send.py "$whGREEN" "$LogInput" "$TIME0"
 VPNLOG1="$(wc -l < /var/log/syslog)"
 while [[ "0" = "0" ]]; do     #This is my lazy way of making sure that the script is constantly looping.
-sleep 10;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
+sleep 20;                     #This puts a delay on how fast the script can run, this stops the script from overloading your server.
 VPNLOG2="$(wc -l < /var/log/syslog)"
   if [[ "$VPNLOG2" > "$VPNLOG1" ]]; then     
   NEWLINES=$((VPNLOG2-VPNLOG1))
@@ -26,7 +26,7 @@ VPNLOG2="$(wc -l < /var/log/syslog)"
   sudo bash log "$LogInput"
   python3 send.py "$whBLUE" "$LogInput" "$TIME0"
   fi
-  rm /etc/SimpleManager/cons.txt
+  sudo rm -Rf /etc/SimpleManager/cons.txt
   fi
   VPNLOG1="$(wc -l < /var/log/syslog)"
 done
