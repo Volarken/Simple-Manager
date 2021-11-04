@@ -184,7 +184,7 @@ setWebhook () { #Allows you to set custom webhook for the running server.
     read -p '>>' -e quickChoice
       if [[ "$quickChoice" = "Y" || "$quickChoice" = "y" ]]; then #If Y/y , remove webhook files.
       sudo rm -Rf webhook.py #These webhook files simply store 1 variable, .py is used to interact with the python send script.
-	  sudo rm -Rf webhook.txt #.txt is used to interact with the logDump bash function.
+	  sudo rm -Rf webhook.var #.txt is used to interact with the logDump bash function.
 	  #this method isnt super effecient, will work to make local variable storage simplified in the future.
       fi
         if [[ "$quickChoice" = "N" || "n" ]]; then #Multiple webhook support not yet implemented. 
@@ -197,7 +197,7 @@ setWebhook () { #Allows you to set custom webhook for the running server.
   echo "To setup discord notifcaitons, create a webhook on your discord server."
   echo "Please paste the Webhook URL below and press enter..."
   read -p '>>' WEBHOOK
-  echo "$WEBHOOK" >> webhook.txt
+  echo "$WEBHOOK" >> webhook.var
   sudo /bin/cat <<-EOM >>webhook.py
 url = '$WEBHOOK'
 EOM
@@ -291,7 +291,7 @@ python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 ##main menu function 5##
 logDump () { #Dump 99 newest lines of LOG to discord. 
 TIME0=$(date)    
-WEBHOOK_URL=$(cat /etc/SimpleManager/webhook.txt)
+WEBHOOK_URL=$(cat /etc/SimpleManager/webhook.var)
 tail -n 99 <$FILE   > logfile.txt
 curl \
   -F 'payload_json={"username": "Botty McBotFace", "content": "@everyone"}' \
