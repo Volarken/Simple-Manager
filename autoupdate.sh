@@ -5,6 +5,7 @@ source global.var
 if test -f /etc/SimpleManager/SimpleManager.sh ; then
 rm -Rf /etc/SimpleManager/SimpleManager.sh
 rm -Rf /etc/SimpleManager/*.sh.1
+fi
 
 
 ##Child Script Variables##
