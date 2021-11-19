@@ -100,6 +100,7 @@ if test -d /etc/SimpleManager/ #If the folder exists, check to make sure all fil
 ##function 4##
 updateCheck(){
 if [ "$APIVERSION" = "$WEBVERSION" ]; then	# If local APIVERSION does not match WEBVERSION, re-install all scripts.
+TIME0=$(date)
 bash log "Script up to date, last update check ran on $TIME0" #If local version does match webversion, log and move to next function.
 
 else
@@ -120,6 +121,7 @@ fi
 requiredReposCheck () { 
 if [ $(dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -c "ok installed") -eq 0 ]; #checks if python3 is installed.
 then #To speed things up and patch possible errors, each repo check will attempt to download all of the required repos.
+  TIME0=$(date)
   bash log "Missing python3" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will aquire them now. This may take a while. 
   read -p 'Press enter to continue.'
@@ -132,6 +134,7 @@ then #To speed things up and patch possible errors, each repo check will attempt
 fi
 if [ $(dpkg-query -W -f='${Status}' screen 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
+  TIME0=$(date)
   bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will acquire them now. This may take a while. 
   read -p 'Press enter to continue.'
@@ -142,6 +145,7 @@ then
 fi
 if [ $(dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
+  TIME0=$(date)
   bash log "Missing screen" "One or more required repositories are not installed, will acquire now at $TIME0"
   echo You are missing required files, we will acquire them now. This may take a while. 
   read -p 'Press enter to continue.'
@@ -251,6 +255,7 @@ fi	#If the file is not in rc.local after attempting to add it, issue an error to
 	LogInput="ERROR: Script has not been added to startup."
 	echo $LogInput
 	bash log "$LogInput" || exit
+	TIME0=$(date)
 	python3 send.py "$whRED" "$LogInput" "$TIME0"
 	fi
 done
@@ -258,6 +263,7 @@ done
 LogInput="Warning: All scripts should now be online..."
 sudo bash log "$LogInput" || exit
 sleep 1;
+TIME0=$(date)
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 mainMenu
 }
@@ -274,6 +280,7 @@ echo "Y/N"
 	  sleep 5;
 	sudo bash log "$LogInput" || exit
 	sleep 1;
+	TIME0=$(date)
 	python3 send.py "$whBLUE" "$LogInput" "$TIME0"
     systemctl restart rc-local
      else
@@ -285,6 +292,7 @@ sleep 10;
 LogInput="Warning: All scripts should now be online..."
 sudo bash log "$LogInput" || exit
 sleep 2;
+TIME0=$(date)
 python3 send.py "$whBLUE" "$LogInput" "$TIME0"
 }
 
