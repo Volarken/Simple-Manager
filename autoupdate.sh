@@ -65,7 +65,6 @@ fi
   sudo reboot
   fi
   if [[ "$DAYS" = "14" ]]; then
-  sudo rm -Rf *.txt
   if ! { sudo apt-get update 2>&1 || echo E: update failed; } | grep -q '^[WE]:'; then #run update and check for errors
 		LogInput="SERVER UPDATE SUCCESSFUL."
 		  sudo bash log "$LogInput"
