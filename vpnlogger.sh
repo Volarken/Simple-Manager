@@ -24,6 +24,7 @@ VPNLOG2="$(wc -l < /var/log/syslog)"
   NEWCONNECTION=$(cat /etc/SimpleManager/cons.txt)
   LogInput="New VPN connection on server! -Details- $NEWCONNECTION "
   sudo bash log "$LogInput"
+  TIME0=$(date) 
   python3 send.py "$whBLUE" "$LogInput" "$TIME0"
   fi
   sudo rm -Rf /etc/SimpleManager/cons.txt
